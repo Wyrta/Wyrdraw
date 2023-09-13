@@ -19,6 +19,12 @@ TileMap::TileMap(const char* name)
 		on_map_item[i] = false;
 	}
 
+	for (int i = 0; i < MAX_ENTITY; i++)
+	{
+		entity[i] = NULL;
+	}
+
+
 	load(name);
 
 	move({0,0});	// refresh all tiles coordinates
@@ -35,7 +41,17 @@ TileMap::~TileMap()
 		delete (tile[i]);
 		tile[i] = NULL;
 	}
+
+	for (int i = 0; i < MAX_ENTITY; i++)
+	{
+		if (entity[i] == NULL)
+			continue;
+
+		delete (entity[i]);
+		entity[i] = NULL;
+	}
 }
+
 
 Tile* TileMap::addTile(const char* tile_name, TileType tile_type, SDL_Point tile_coo)
 {
@@ -51,8 +67,12 @@ Tile* TileMap::addTile(const char* tile_name, TileType tile_type, SDL_Point tile
 	return (new_tile);
 }
 
+
 bool TileMap::addTile(Tile *tile_to_add)
 {
+	if (tile_to_add == NULL)
+		return (false);
+
 	for (int i = 0; i < MAX_TILE; i++)
 	{
 		if (tile[i] != NULL)
@@ -65,6 +85,42 @@ bool TileMap::addTile(Tile *tile_to_add)
 	
 	return (false);
 }
+
+
+Entity* TileMap::addEntity(const char* entity_name, SDL_Point entity_coo)
+{
+	Entity* entity_to_add = NULL;
+
+	entity_to_add = new Entity(entity_name);
+	entity_to_add->setCoordinate(entity_coo);
+	
+	if (entity_to_add != NULL)
+	{
+		addEntity(entity_to_add);
+	}
+	
+	return (entity_to_add);
+}
+
+
+bool TileMap::addEntity(Entity *entity_to_add)
+{
+	if (entity_to_add == NULL)
+		return (false);
+		
+	for (int i = 0; i < MAX_ENTITY; i++)
+	{
+		if (entity[i] != NULL)
+			continue;
+
+		entity[i] = entity_to_add;
+		entity[i]->followMap(&public_coordinate);
+		return (true);
+	}
+	
+	return (false);
+}
+
 
 void TileMap::setCoordinate(SDL_Point new_coordinate)
 {
@@ -90,6 +146,7 @@ void TileMap::setCoordinate(SDL_Point new_coordinate)
 	}
 }
 
+
 void TileMap::move(SDL_Point diff)
 {
 	SDL_Point new_coordinate;
@@ -100,11 +157,55 @@ void TileMap::move(SDL_Point diff)
 }
 
 
+void TileMap::setFollowEntity(int entity_id)
+{
+	if (entity_id < 0 && entity_id >= MAX_ENTITY)
+	{
+		entity_to_follow = -1;
+		return;
+	}
+
+	if (entity[entity_id] == NULL)
+	{
+		entity_to_follow = -1;
+		return;
+	}
+
+	entity_to_follow = entity_id;
+}
+
+
+void TileMap::followEntity(void)
+{
+	if (entity_to_follow == -1)
+		return;
+
+	Entity* followed = entity[entity_to_follow];
+
+	if (followed == NULL)
+		return;
+
+	
+	SDL_Point entity_coordinate = followed->getCoordinate();
+	entity_coordinate.x *= MapItem::tile_size.w;
+	entity_coordinate.y *= MapItem::tile_size.h;
+
+	SDL_Rect screen = param.getScreen();
+
+	SDL_Point map_coordinate = coordinate;
+
+	map_coordinate.x = (-entity_coordinate.x) + (screen.w/2);
+	map_coordinate.y = (-entity_coordinate.y) + (screen.h/2);
+
+	setCoordinate(map_coordinate);
+}
+
+
 void TileMap::proc(InputManager* input_manager)
 {
 	if (!isEnable())
 		return;
-	
+
 	int number_tile_printed = 0;
 	
 	bool proc_wheel = false;
@@ -112,21 +213,22 @@ void TileMap::proc(InputManager* input_manager)
 	if (input_manager->getWheel(WHEEL_UP))
 	{
 		Tile::tile_size.w += 2;
-		//Tile::tile_size.h += 2;
+		Tile::tile_size.h += 2;
 		proc_wheel = true;
 	}
 	else if (input_manager->getWheel(WHEEL_DOWN))
 	{
 		Tile::tile_size.w -= 2;
-		//Tile::tile_size.h -= 2;
+		Tile::tile_size.h -= 2;
 		proc_wheel = true;
 	}
+
+	followEntity();
 
 	for (int i = 0; i < MAX_TILE; i++)
 	{
 		if (tile[i] == NULL)
 			continue;
-
 
 		SDL_Rect tile_hitbox = tile[i]->getHitbox();
 
@@ -158,7 +260,24 @@ void TileMap::proc(InputManager* input_manager)
 		number_tile_printed++;
 	}
 
-//	std::cout << "TileMap::proc" << std::endl;
+	for (int i = 0; i < MAX_ENTITY; i++)
+	{
+		if (entity[i] == NULL)
+			continue;
+
+		SDL_Rect entity_hitbox = entity[i]->getHitbox();
+
+		if (proc_wheel)
+		{
+			entity_hitbox.w = MapItem::tile_size.w;
+			entity_hitbox.h = MapItem::tile_size.h;
+			entity[i]->setHitbox(entity_hitbox);
+		
+			entity_hitbox = entity[i]->getHitbox();
+		}
+
+		entity[i]->proc(param.getRenderer());
+	}
 
 	Scene::proc(input_manager);
 }

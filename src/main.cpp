@@ -90,9 +90,9 @@ int main(int argc, char **argv)
 
 	Uint32 last_tick = SDL_GetTicks();
 	
-	char text_buffer[10];
-	Uint32 last_tick_duration = 0;
-	Text tick_number("0", WD_SIZE_FIT_CONTENT, COLOR_BLACK, (SDL_Color){128,128,128,128});
+	char text_buffer[64];
+	int last_tick_duration = 0;
+	Text tick_number("", WD_SIZE_FIT_CONTENT, COLOR_BLACK, (SDL_Color){128,128,128,128});
 
 	while (game.run() && !input_manager.doQuit())
 	{
@@ -100,7 +100,8 @@ int main(int argc, char **argv)
 
 		input_manager.proc();
 
-		SDL_itoa(last_tick_duration, text_buffer, 10);
+
+		snprintf(text_buffer, 64, "Tick duration %2dms - Tick number %5d", last_tick_duration, param.getTick());
 		tick_number.setText(text_buffer);
 		
 		game.proc(&input_manager);

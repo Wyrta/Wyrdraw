@@ -27,14 +27,14 @@ Tile::~Tile()
 }
 
 
-Direction Tile::canWalk(void)
+WD_Direction Tile::canWalk(void)
 {
 	return (walk_stat);
 }
 
-bool Tile::canWalk(Direction direction)
+bool Tile::canWalk(WD_Direction direction)
 {
-	if ((direction == walk_stat) || (walk_stat == Direction::ALL))
+	if ((direction == walk_stat) || (walk_stat == WD_Direction::ALL))
 		return (true);
 	else
 		return (false);

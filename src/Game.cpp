@@ -9,6 +9,7 @@
 #include "WD_Type.hpp"
 
 extern Parameters param;
+Entity* player;
 
 int Game::init(SDL_Rect* screen)
 {
@@ -39,6 +40,12 @@ int Game::ready(void)
 	button->on_click = (SDL_Color){255, 255, 255, SDL_ALPHA_OPAQUE};
 	button->on_hover = (SDL_Color){128, 128, 128, SDL_ALPHA_OPAQUE};
 
+	player = new Entity("Player1");
+	player->setCoordinate({0,0});
+	player->setTexture(createTexture(param.getRenderer(), NULL, "../assets/img/npcTest.png"));
+	map->addEntity(player);
+
+	map->setFollowEntity(0);
 	map->setEnable(true);
 
 	return (0);
@@ -47,7 +54,7 @@ int Game::ready(void)
 
 int Game::proc(InputManager* input_manager)
 {	
-	std::cout << "Tick number: " << ++tick_number << std::endl;
+	++tick_number;
 
 	if (input_manager->keyMaintained(SDLK_d))
 	{
@@ -69,6 +76,27 @@ int Game::proc(InputManager* input_manager)
 	{
 		Text* item = (Text* )(map->getItem(0));
 		item->setBackground(!item->hasBackground());
+	}
+
+	if (input_manager->keyMaintained(SDLK_d))
+	{
+		player->move({1, 0});
+	}
+	if (input_manager->keyMaintained(SDLK_q))
+	{
+		player->move({-1, 0});
+	}
+	if (input_manager->keyMaintained(SDLK_z))
+	{
+		player->move({0, -1});
+	}
+	if (input_manager->keyMaintained(SDLK_s))
+	{
+		player->move({0, 1});
+	}
+	if (input_manager->keyMaintained(SDLK_SPACE))
+	{
+		player->takeDamages(2);
 	}
 
 	map->proc(input_manager);

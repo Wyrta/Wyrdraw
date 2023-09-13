@@ -52,6 +52,8 @@ Text::~Text()
 void Text::update(void)
 {
 	SDL_Rect rect;
+
+	SDL_DestroyTexture(texture);
 	texture = write(param.getRenderer(), &rect, param.getFont(20), text, text_color);
 
 	texture_hitbox = rect;
@@ -96,7 +98,7 @@ void Text::proc(bool clicked, bool hovered, bool maintained)
 
 void Text::setText(const char* content)
 {
-	strcpy(text, content);
+	SDL_strlcpy(text, content, 128);
 
 	need_to_update = true;
 }

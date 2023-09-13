@@ -15,6 +15,15 @@ typedef struct _WD_Size {
 	int h;	// Height
 } WD_Size;
 
+typedef enum {
+	NORTH,
+	SOUTH,
+	WEST,
+	EAST,
+	ALL,
+	NONE
+} WD_Direction;
+
 #define WD_SIZE_FIT_CONTENT	(WD_Size){-1,-1}
 
 bool operator==(WD_Size size1, WD_Size size2);

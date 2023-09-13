@@ -6,14 +6,6 @@
 #include "MapItem.hpp"
 #include "WD_Type.hpp"
 
-typedef enum {
-	NORTH,
-	SOUTH,
-	WEST,
-	EAST,
-	ALL,
-	NONE
-} Direction;
 
 
 typedef enum {
@@ -49,14 +41,14 @@ typedef enum {
 class Tile : public MapItem
 {
 	private: 
-		Direction walk_stat;
+		WD_Direction walk_stat;
 
 	public: 
 		Tile(const char* name, TileType type, SDL_Point coo);
 		~Tile();
 
-		Direction canWalk(void);
-		bool canWalk(Direction direction);
+		WD_Direction canWalk(void);
+		bool canWalk(WD_Direction direction);
 
 		static int size;
 		static void loadTexture(void);

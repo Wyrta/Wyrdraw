@@ -6,8 +6,10 @@
 #include "Scene.hpp"
 #include "Tile.hpp"
 #include "InputManager.hpp"
+#include "Entity.hpp"
 
 #define MAX_TILE	512
+#define MAX_ENTITY	32
 
 class TileMap : public Scene
 {
@@ -16,12 +18,13 @@ class TileMap : public Scene
 		WD_Size size;
 
 		Tile* tile[MAX_TILE];
+		Entity* entity[MAX_ENTITY];
 
 		bool on_map_item[MAX_ITEM];
 
 		void load(const char *file_name);
 
-
+		int entity_to_follow;
 	public: 
 		TileMap(const char* name);
 		~TileMap();
@@ -29,8 +32,13 @@ class TileMap : public Scene
 		Tile* addTile(const char* tile_name, TileType tile_type, SDL_Point coo);
 		bool addTile(Tile *tile_to_add);
 
+		Entity* addEntity(const char* entity_name, SDL_Point entity_coo);
+		bool addEntity(Entity *entity_to_add);
+
 		void setCoordinate(SDL_Point new_coordinate);
 		void move(SDL_Point diff);
+		void setFollowEntity(int entity_id);
+		void followEntity(void);
 
 		void attachItemToMap(int id);
 		void detachItemfromMap(int id);

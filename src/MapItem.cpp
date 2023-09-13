@@ -64,6 +64,11 @@ void MapItem::followMap(SDL_Point* new_map_coordinate)
 	map_coordinate = new_map_coordinate;
 }
 
+void MapItem::move(SDL_Point diff)
+{
+	coordinate.x = coordinate.x + diff.x;
+	coordinate.y = coordinate.y + diff.y;
+}
 
 MapItem* MapItem::newMapItem(const char* path, SDL_Point coordinate, SDL_Rect hitbox, SDL_Rect mask)
 {
