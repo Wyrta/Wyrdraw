@@ -7,6 +7,7 @@
 #include "Game.hpp"
 #include "Parameters.hpp"
 #include "InputManager.hpp"
+#include "Text.hpp"
 
 #define APP_NAME	"Wyrdraw engine"
 
@@ -38,6 +39,18 @@ int main(int argc, char **argv)
 	srand(0);
 
 	game.init(&screen);
+
+
+	SDL_version compiled;
+	SDL_version linked;
+
+	SDL_VERSION(&compiled);
+	SDL_GetVersion(&linked);
+	SDL_Log("We compiled against SDL version %u.%u.%u ...\n",
+		compiled.major, compiled.minor, compiled.patch);
+	SDL_Log("But we are linking against SDL version %u.%u.%u.\n",
+		linked.major, linked.minor, linked.patch);
+
 
 	SDL_Window* window = createWindow(screen, APP_NAME);
 	
@@ -76,22 +89,30 @@ int main(int argc, char **argv)
 	game.ready();
 
 	Uint32 last_tick = SDL_GetTicks();
+	
+	char text_buffer[10];
+	Uint32 last_tick_duration = 0;
+	Text tick_number("0", WD_SIZE_FIT_CONTENT, COLOR_BLACK, (SDL_Color){128,128,128,128});
 
 	while (game.run() && !input_manager.doQuit())
 	{
 		param.setTick(game.tick_number);
 
 		input_manager.proc();
+
+		SDL_itoa(last_tick_duration, text_buffer, 10);
+		tick_number.setText(text_buffer);
 		
 		game.proc(&input_manager);
 
 		// proc all
 
-
+		tick_number.proc(false, false, false);
 		SDL_RenderPresent(param.getRenderer());
 		
 		Uint32 current_tick = SDL_GetTicks();
-		Uint32 wait = param.getTicksDuration() - (current_tick - last_tick);
+		last_tick_duration = (current_tick - last_tick);
+		Uint32 wait = param.getTicksDuration() - last_tick_duration;
 		if (wait > 0 && wait < 100)
 			SDL_Delay(wait);
 

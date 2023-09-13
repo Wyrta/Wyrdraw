@@ -32,16 +32,10 @@ void GraphicItem::render(SDL_Renderer* render)
 	
 	if (!isRectEmpty(mask))
 	{
-		src = (SDL_Rect *)malloc(sizeof(SDL_Rect));
-		src->x = mask.x; 
-		src->y = mask.y; 
-		src->w = mask.w; 
-		src->h = mask.h; 
+		src = &mask;
 	}
 
 	err = SDL_RenderCopy(render, texture, src, &dst);
-
-	free(src);
 
 	if (err < 0)
 	{
@@ -53,6 +47,13 @@ void GraphicItem::render(SDL_Renderer* render)
 SDL_Rect GraphicItem::getHitbox(void)
 {
 	return (hitbox);
+}
+
+
+void GraphicItem::move(SDL_Point diff)
+{
+	hitbox.x = hitbox.x + diff.x;
+	hitbox.y = hitbox.y + diff.y;
 }
 
 

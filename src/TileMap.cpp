@@ -70,19 +70,7 @@ void TileMap::setCoordinate(SDL_Point new_coordinate)
 {
 	SDL_Point old_coordinate = coordinate;
 	public_coordinate = coordinate = new_coordinate;
-/*
-	for (int i = 0; i < MAX_TILE; i++)
-	{
-		if (tile[i] == NULL)
-			continue;
 
-		SDL_Point tile_pos = tile[i]->getCoordinate();
-
-		tile_pos.x = (tile_pos.x * Tile::size) + coordinate.x;
-		tile_pos.y = (tile_pos.y * Tile::size) + coordinate.y;
-		tile[i]->setCoordinate(tile_pos);
-	}
-*/
 	for (int i = 0; i < MAX_ITEM; i++)
 	{
 		if (!on_map_item[i])
@@ -118,46 +106,41 @@ void TileMap::proc(InputManager* input_manager)
 		return;
 	
 	int number_tile_printed = 0;
-
-/*		
+	
 	bool proc_wheel = false;
 
 	if (input_manager->getWheel(WHEEL_UP))
 	{
-		Tile::size += 2;
+		Tile::tile_size.w += 2;
+		//Tile::tile_size.h += 2;
 		proc_wheel = true;
 	}
 	else if (input_manager->getWheel(WHEEL_DOWN))
 	{
-		Tile::size -= 2;
+		Tile::tile_size.w -= 2;
+		//Tile::tile_size.h -= 2;
 		proc_wheel = true;
 	}
-*/
+
 	for (int i = 0; i < MAX_TILE; i++)
 	{
 		if (tile[i] == NULL)
 			continue;
 
-		tile[i]->render(param.getRenderer());
 
 		SDL_Rect tile_hitbox = tile[i]->getHitbox();
 
-/*
 		if (proc_wheel)
 		{
-			tile_hitbox.w = Tile::size;
-			tile_hitbox.h = Tile::size;
+			tile_hitbox.w = MapItem::tile_size.w;
+			tile_hitbox.h = MapItem::tile_size.h;
 			tile[i]->setHitbox(tile_hitbox);
 		
 			tile_hitbox = tile[i]->getHitbox();
-
-			SDL_Point tile_pos = tile[i]->getMapCoordinate();
-
-			tile_pos.x = (tile_pos.x * Tile::size) + coordinate.x;
-			tile_pos.y = (tile_pos.y * Tile::size) + coordinate.y;
-			tile[i]->setCoordinate(tile_pos);
 		}
-*/
+
+		tile[i]->render(param.getRenderer());
+
 		SDL_Point mouse = input_manager->mouseCoordinate();
 
 		if (SDL_PointInRect(&mouse, &tile_hitbox))
@@ -171,8 +154,6 @@ void TileMap::proc(InputManager* input_manager)
 
 			SDL_RenderFillRect(param.getRenderer(), &tile_hitbox);
 		}
-
-
 
 		number_tile_printed++;
 	}
@@ -218,7 +199,7 @@ void TileMap::load(const char *file_name)
 		std::cerr << "Failed loading map " << file_path << " cant open file" << std::endl;
 	}
 
-	std::cout << "Loading map " << file_path << std::endl;
+	std::cout << "Loading map ... \"" << file_path << "\"" << std::endl;
 
 
 	int nb_tiles = 0;
@@ -268,7 +249,7 @@ void TileMap::load(const char *file_name)
 			tile_type		= Tile::getTiletype(strTile_type.c_str());
 			tile_walkable	= 0;//Tile::getTileDir(strTile_walkable);
 
-			printf("> %d,%d,%d,%d\r\n", tileCoo.x, tileCoo.y, tile_type, tile_walkable);
+//			printf("> %d,%d,%d,%d\r\n", tileCoo.x, tileCoo.y, tile_type, tile_walkable);
 
 //			for (unsigned int i = 0; i < MAX_TILE; i++)
 //			{

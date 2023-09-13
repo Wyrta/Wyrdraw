@@ -22,6 +22,7 @@ class GraphicItem
 
 		SDL_Rect getHitbox(void);
 		void setHitbox(SDL_Rect new_hitbox);
+		void move(SDL_Point diff);
 
 		SDL_Rect getMask(void);
 		void setMask(SDL_Rect new_mask);

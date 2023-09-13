@@ -85,7 +85,7 @@ void Text::proc(bool clicked, bool hovered, bool maintained)
 
 	if (has_background)
 	{
-		SDL_SetRenderDrawColor(param.getRenderer(), background_color.r, background_color.g, background_color.b, SDL_ALPHA_OPAQUE);
+		SDL_SetRenderDrawColor(param.getRenderer(), background_color.r, background_color.g, background_color.b, background_color.a);
 		SDL_RenderFillRect(param.getRenderer(), &hitbox);
 	}
 

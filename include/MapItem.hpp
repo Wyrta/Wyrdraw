@@ -20,6 +20,7 @@ class MapItem : public GraphicItem
 		SDL_Point getCoordinate(void);
 		void setCoordinate(SDL_Point new_coordinate);
 		void followMap(SDL_Point* new_map_coordinate);
+		void move(SDL_Point diff);
 
 		static WD_Size tile_size;
 

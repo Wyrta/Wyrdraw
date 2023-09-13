@@ -1,5 +1,4 @@
 .vscode
-
 *.o
-engine
+engine.exe
 *.zip
