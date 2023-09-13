@@ -9,7 +9,6 @@
 #define printRect(rect)		"["<<#rect<<"] : x"<<rect.x<<" y" <<rect.y<<" w"<<rect.w<<" h"<<rect.h<<" "
 #define printPoint(point)	"["<<#point<<"] : x"<<point.x<<" y" <<point.y<<" "
 
-bool PointInRect(SDL_Point point, SDL_Rect rect);
 bool RectCollide(SDL_Rect rect1, SDL_Rect rect2);
 
 
@@ -17,6 +16,7 @@ SDL_Texture *createTexture(SDL_Renderer* render, SDL_Rect* rectangle, const char
 TTF_Font *createFont(const char *path, int size);
 SDL_Texture *write(SDL_Renderer* render, SDL_Rect *rect, TTF_Font *font, const char *text, SDL_Color color);
 
+bool isRectEmpty(SDL_Rect rect);
 
 
 #endif // _wdfunction_hpp_

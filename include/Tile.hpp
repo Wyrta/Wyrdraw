@@ -3,7 +3,7 @@
 
 #include "SDL2/SDL.h"
 
-#include "Sprite.hpp"
+#include "MapItem.hpp"
 #include "WD_Type.hpp"
 
 typedef enum {
@@ -46,25 +46,22 @@ typedef enum {
 } TileType;
 
 
-class Tile : public Sprite
+class Tile : public MapItem
 {
 	private: 
-		SDL_Point map_coordinate;
 		Direction walk_stat;
 
 	public: 
 		Tile(const char* name, TileType type, SDL_Point coo);
 		~Tile();
 
-		SDL_Point getMapCoordinate(void);
-		void setMapCoordinate(SDL_Point new_coo);
-		
 		Direction canWalk(void);
 		bool canWalk(Direction direction);
 
 		static int size;
 		static void loadTexture(void);
 		static TileType getTiletype(const char* str);
+		static SDL_Texture *texture[TileType::LAST_TTYPE];
 
 		
 };

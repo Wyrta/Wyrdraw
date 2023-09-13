@@ -46,21 +46,19 @@ SDL_Texture *createTexture(SDL_Renderer* render, SDL_Rect* rectangle, const char
 
 	surface = IMG_Load(path);
 
-	if (surface)
-	{
-		texture = SDL_CreateTextureFromSurface(render, surface);
-		SDL_FreeSurface(surface);
-
-		if(rectangle != NULL)
-			SDL_QueryTexture(texture, NULL, NULL, &rectangle->w, &rectangle->h);
-
-		return (texture);
-	}
-	else
+	if (surface == NULL)
 	{
 		std::cerr << "Create texture : \"" << path << "\": " << SDL_GetError() << std::endl;
+		return (NULL);
 	}
-	return (NULL);
+
+	texture = SDL_CreateTextureFromSurface(render, surface);
+	SDL_FreeSurface(surface);
+
+	if(rectangle != NULL)
+		SDL_QueryTexture(texture, NULL, NULL, &rectangle->w, &rectangle->h);
+
+	return (texture);
 }
 
 
@@ -98,4 +96,16 @@ SDL_Texture *write(SDL_Renderer* render, SDL_Rect *rect, TTF_Font *font, const c
 	}
 
 	return (texture);
+}
+
+
+bool isRectEmpty(SDL_Rect rect)
+{
+	if (rect.x == 0 && 
+		rect.y == 0 && 
+		rect.w == 0 && 
+		rect.h == 0)
+		return (true);
+	else
+		return (false);
 }

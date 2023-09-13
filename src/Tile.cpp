@@ -10,30 +10,18 @@ extern Parameters param;
 
 int Tile::size = 64;
 
-SDL_Texture *texture[TileType::LAST_TTYPE] = {NULL};
+SDL_Texture *Tile::texture[TileType::LAST_TTYPE] = {NULL};
 
-Tile::Tile(const char* name, TileType type, SDL_Point coo) : Sprite(name)
+Tile::Tile(const char* name, TileType type, SDL_Point coo) : MapItem()
 {
-	map_coordinate = coo;
-
-	setFrame(0, texture[type]);
-
+	setConstTexture(true);
+	setTexture(Tile::texture[type]);
 	setHitbox({0, 0, Tile::size, Tile::size});
+	setCoordinate(coo);
 }
 
 
 Tile::~Tile()
-{
-
-}
-
-
-SDL_Point Tile::getMapCoordinate(void)
-{
-	return (map_coordinate);
-}
-
-void Tile::setMapCoordinate(SDL_Point new_coo)
 {
 
 }

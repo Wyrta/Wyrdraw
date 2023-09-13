@@ -59,6 +59,7 @@ bool TileMap::addTile(Tile *tile_to_add)
 			continue;
 
 		tile[i] = tile_to_add;
+		tile[i]->followMap(&public_coordinate);
 		return (true);
 	}
 	
@@ -68,20 +69,20 @@ bool TileMap::addTile(Tile *tile_to_add)
 void TileMap::setCoordinate(SDL_Point new_coordinate)
 {
 	SDL_Point old_coordinate = coordinate;
-	coordinate = new_coordinate;
-
+	public_coordinate = coordinate = new_coordinate;
+/*
 	for (int i = 0; i < MAX_TILE; i++)
 	{
 		if (tile[i] == NULL)
 			continue;
 
-		SDL_Point tile_pos = tile[i]->getMapCoordinate();
+		SDL_Point tile_pos = tile[i]->getCoordinate();
 
 		tile_pos.x = (tile_pos.x * Tile::size) + coordinate.x;
 		tile_pos.y = (tile_pos.y * Tile::size) + coordinate.y;
 		tile[i]->setCoordinate(tile_pos);
 	}
-
+*/
 	for (int i = 0; i < MAX_ITEM; i++)
 	{
 		if (!on_map_item[i])
@@ -137,7 +138,7 @@ void TileMap::proc(InputManager* input_manager)
 		if (tile[i] == NULL)
 			continue;
 
-		tile[i]->render();
+		tile[i]->render(param.getRenderer());
 
 		SDL_Rect tile_hitbox = tile[i]->getHitbox();
 

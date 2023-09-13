@@ -37,5 +37,6 @@ class TileMap : public Scene
 
 		void proc(InputManager* input_manager);
 
+		SDL_Point public_coordinate = {0, 0};
 };
 #endif // _tilemap_hpp_

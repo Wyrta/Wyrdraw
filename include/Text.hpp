@@ -9,8 +9,7 @@
 typedef enum {
 	CENTER,
 	LEFT,
-	RIGHT,
-	NONE
+	RIGHT
 } Align;
 
 class Text : public GuiItem
