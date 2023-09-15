@@ -1,14 +1,19 @@
 #include "Entity.hpp"
 #include "SDL2/SDL.h"
 #include <iostream>
+#include "WD_Function.hpp"
 
 Entity::Entity(const char* e_name) : MapItem()
 {
 	SDL_strlcpy(name, e_name, 32);
 
-	speed = 1.0;
+	speed = 0.25;
 	health = 100;
 	orientation = WD_Direction::NONE;
+	last_move = 0;
+	pathfinder = NULL;
+
+	current_tile = NULL;
 }
 
 
@@ -16,6 +21,13 @@ Entity::~Entity()
 {
 
 }
+
+void Entity::setTile(Tile* tile)
+{
+	current_tile = tile;
+	setCoordinate(current_tile->getCoordinate());
+}
+
 
 void Entity::printHealthBar(SDL_Renderer* render)
 {
@@ -47,29 +59,140 @@ void Entity::printHealthBar(SDL_Renderer* render)
 
 void Entity::proc(SDL_Renderer* render)
 {
+	// if current_tile deal damages ?
+
+	if (pathfinder != NULL)
+	{
+		Path* path = pathfinder->getNext(getCoordinate());
+
+		if (path != NULL)
+		{
+			walkTo(path->coordinate);
+			pathfinder->print_path(render);
+		}
+		else
+		{
+			delete (pathfinder);
+			pathfinder = NULL;
+		}
+	}
+
 	MapItem::render(render);
 	if (do_print_health)
 		printHealthBar(render);
+
+	last_move++;
 }
 
 
-bool Entity::walk(SDL_Point target_coordinate)
+bool Entity::walk(SDL_Point diff, Tile* tile)
 {
-	std::cout << "Entity::walk(SDL_Point ) not implemented" << std::endl;
-return false;
-	//orientation
+	SDL_Point coo = getCoordinate();
+	WD_Direction dir;
 
+	if (diff == (SDL_Point){0,0})
+	{
+		if (tile != NULL)
+			current_tile = tile;
+			
+		return (true);
+	}
+
+	if (diff.x > 1 || diff.x < -1 || diff.y > 1 || diff.y < -1)
+	{
+		std::cout << "Entity::walk(...) To far away : " << printPoint(coo) << printPoint(diff) << std::endl;
+		std::cout << "Try enable pathfinding" << std::endl;
+
+		return (false);
+	}
+
+	if (last_move * speed < 1)
+	{
+		// std::cout << "Entity::walk(...) Cannot walk yet : " << last_move << " * " << speed << " = " << last_move * speed << std::endl;
+
+		return (false);
+	}
+
+	if (diff.x == 1)
+		dir = WD_Direction::EAST;
+	else if (diff.x == -1)
+		dir = WD_Direction::WEST;
+	else if (diff.y == 1)
+		dir = WD_Direction::SOUTH;
+	else if (diff.y == -1)
+		dir = WD_Direction::NORTH;
+	else 
+		dir = WD_Direction::NONE;
+
+	if (tile == NULL && current_tile != NULL)
+	{
+		if (diff.x == 1)
+			tile = current_tile->east;
+		else if (diff.x == -1)
+			tile = current_tile->west;
+		else if (diff.y == 1)
+			tile = current_tile->south;
+		else if (diff.y == -1)
+			tile = current_tile->north;
+	}
+
+	if (tile == NULL)
+	{
+		// std::cout << "Entity::walk(...) No tile found : " << printDirection(dir) << std::endl;
+		return (false);
+	}
+
+	if (!tile->canWalk(dir))
+	{
+		// std::cout << "Entity::walk(...) Cannot walk there : " << printDirection(dir) << std::endl;
+		return (false);
+	}
+
+	last_move = 0;
+	move(diff);
+	coo = getCoordinate();
+	current_tile = tile;
+	orientation = dir;
+
+	return (true);
 }
 
 
-bool Entity::fly(SDL_Point target_coordinate)
+bool Entity::walkTo(SDL_Point coo, Tile* tile)
 {
-	std::cout << "Entity::fly(SDL_Point ) not implemented" << std::endl;
-	//orientation
+	SDL_Point diff, current_coo;
+	bool retval;
 
-return false;
+	current_coo = getCoordinate();
+
+	diff = coo - current_coo;
+
+	retval = walk(diff, tile);
+
+	return (retval);
 }
 
+
+bool Entity::goTo(SDL_Point coo, Tile **tilemap, int size)
+{
+	if (pathfinder == NULL)
+	{
+		pathfinder = new PathFinder();
+	}
+	else
+	{
+		delete (pathfinder);
+		pathfinder = new PathFinder();
+	}
+
+	pathfinder->setSource(getCoordinate());
+	pathfinder->setDestination(coo);
+	pathfinder->setTilemap(tilemap, size);
+
+	pathfinder->find();
+
+	return (true);
+}
 
 char *Entity::talk(void)
 {
@@ -90,17 +213,17 @@ void Entity::takeDamages(int damage)
 }
 
 
+int Entity::dealDamages(void)
+{
+	std::cout << "Entity::dealDamages(void) not implemented" << std::endl;
+	return (0);
+}
+
+
+
 void Entity::onDead(void)
 {
 	std::cout << name << "is dead" << std::endl;
 	std::cout << "Entity::onDead(void) not implemented" << std::endl;
 
 }
-
-
-void Entity::fight(Entity* opponent)
-{
-	std::cout << "Entity::fight(Entity* ) not implemented" << std::endl;
-
-}
-

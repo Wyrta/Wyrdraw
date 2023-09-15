@@ -29,11 +29,13 @@ class TileMap : public Scene
 		TileMap(const char* name);
 		~TileMap();
 
-		Tile* addTile(const char* tile_name, TileType tile_type, SDL_Point coo);
+		Tile* addTile(const char* tile_name, TileType tile_type, SDL_Point tile_coo, WD_Direction tile_dir);
 		bool addTile(Tile *tile_to_add);
+		Tile* getTile(SDL_Point tile_coordinate);
 
 		Entity* addEntity(const char* entity_name, SDL_Point entity_coo);
 		bool addEntity(Entity *entity_to_add);
+		Entity* getEntity(SDL_Point entity_coordinate);
 
 		void setCoordinate(SDL_Point new_coordinate);
 		void move(SDL_Point diff);

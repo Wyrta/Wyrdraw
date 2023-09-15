@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 		input_manager.proc();
 
 
-		snprintf(text_buffer, 64, "Tick duration %2dms - Tick number %5d", last_tick_duration, param.getTick());
+		snprintf(text_buffer, 64, "Tick duration %dms - Tick number %d", last_tick_duration, param.getTick());
 		tick_number.setText(text_buffer);
 		
 		game.proc(&input_manager);

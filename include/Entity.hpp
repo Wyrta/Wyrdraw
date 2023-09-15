@@ -4,6 +4,8 @@
 #include "SDL2/SDL.h"
 #include "MapItem.hpp"
 #include "WD_Type.hpp"
+#include "PathFinder.hpp"
+#include "Tile.hpp"
 
 
 /*
@@ -17,8 +19,9 @@ Dialog
 
 class Entity : public MapItem
 {
-    private:
-		float speed;
+	private:
+		float speed;	// tile per tick
+		int last_move;
 		WD_Direction orientation;
 
 		char name[32];
@@ -27,19 +30,27 @@ class Entity : public MapItem
 		bool do_print_health;
 		void printHealthBar(SDL_Renderer* render);
 
-    public:
+		Tile* current_tile;
+
+	public:
 		Entity(const char* e_name);
 		~Entity();
 
+		void setTile(Tile* tile);
+
 		void proc(SDL_Renderer* render);
 
-		bool walk(SDL_Point target_coordinate);
-		bool fly(SDL_Point target_coordinate);
+		bool walk(SDL_Point diff, Tile* tile = NULL);
+		bool walkTo(SDL_Point coo, Tile* tile = NULL);
+		bool goTo(SDL_Point coo, Tile **tilemap, int size);
+
 
 		char *talk(void);
 
 		void takeDamages(int damage);
+		int  dealDamages(void);
 		void onDead(void);
-		void fight(Entity* opponent);
+		
+		PathFinder *pathfinder;
 };
 #endif // _entity_hpp_

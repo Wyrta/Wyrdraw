@@ -53,11 +53,11 @@ TileMap::~TileMap()
 }
 
 
-Tile* TileMap::addTile(const char* tile_name, TileType tile_type, SDL_Point tile_coo)
+Tile* TileMap::addTile(const char* tile_name, TileType tile_type, SDL_Point tile_coo, WD_Direction tile_dir)
 {
 	Tile* new_tile = NULL;
 
-	new_tile = new Tile(tile_name, tile_type, tile_coo);
+	new_tile = new Tile(tile_name, tile_type, tile_coo, tile_dir);
 
 	if (new_tile != NULL)
 	{
@@ -79,12 +79,46 @@ bool TileMap::addTile(Tile *tile_to_add)
 			continue;
 
 		tile[i] = tile_to_add;
+
+		SDL_Point t_coo = tile[i]->getCoordinate();
+		
+		tile[i]->north = getTile({t_coo.x,t_coo.y-1});
+		if (tile[i]->north != NULL)
+			tile[i]->north->south = tile[i];
+
+		tile[i]->south = getTile({t_coo.x,t_coo.y+1});
+		if (tile[i]->south != NULL)
+			tile[i]->south->north = tile[i];
+
+		tile[i]->west  = getTile({t_coo.x-1,t_coo.y});
+		if (tile[i]->west != NULL)
+			tile[i]->west->east = tile[i];
+
+		tile[i]->east  = getTile({t_coo.x+1,t_coo.y});
+		if (tile[i]->east != NULL)
+			tile[i]->east->west = tile[i];
+
 		tile[i]->followMap(&public_coordinate);
 		return (true);
 	}
 	
 	return (false);
 }
+
+Tile* TileMap::getTile(SDL_Point tile_coordinate)
+{
+	for (int i = 0; i < MAX_TILE; i++)
+	{
+		if (tile[i] == NULL)
+			continue;
+
+		if (tile[i]->getCoordinate() == tile_coordinate)
+			return (tile[i]);
+	}
+
+	return (NULL);
+}
+
 
 
 Entity* TileMap::addEntity(const char* entity_name, SDL_Point entity_coo)
@@ -121,6 +155,19 @@ bool TileMap::addEntity(Entity *entity_to_add)
 	return (false);
 }
 
+Entity* TileMap::getEntity(SDL_Point entity_coordinate)
+{
+	for (int i = 0; i < MAX_ENTITY; i++)
+	{
+		if (entity[i] == NULL)
+			continue;
+
+		if (entity[i]->getCoordinate() == entity_coordinate)
+			return (entity[i]);
+	}
+
+	return (NULL);
+}
 
 void TileMap::setCoordinate(SDL_Point new_coordinate)
 {
@@ -187,6 +234,7 @@ void TileMap::followEntity(void)
 
 	
 	SDL_Point entity_coordinate = followed->getCoordinate();
+	SDL_Rect entity_size = followed->getHitbox();
 	entity_coordinate.x *= MapItem::tile_size.w;
 	entity_coordinate.y *= MapItem::tile_size.h;
 
@@ -194,8 +242,8 @@ void TileMap::followEntity(void)
 
 	SDL_Point map_coordinate = coordinate;
 
-	map_coordinate.x = (-entity_coordinate.x) + (screen.w/2);
-	map_coordinate.y = (-entity_coordinate.y) + (screen.h/2);
+	map_coordinate.x = (-entity_coordinate.x - entity_size.w/2) + (screen.w/2);
+	map_coordinate.y = (-entity_coordinate.y - entity_size.h/2) + (screen.h/2);
 
 	setCoordinate(map_coordinate);
 }
@@ -209,6 +257,8 @@ void TileMap::proc(InputManager* input_manager)
 	int number_tile_printed = 0;
 	
 	bool proc_wheel = false;
+
+	Tile* tile_hovered = NULL;
 
 	if (input_manager->getWheel(WHEEL_UP))
 	{
@@ -247,6 +297,8 @@ void TileMap::proc(InputManager* input_manager)
 
 		if (SDL_PointInRect(&mouse, &tile_hitbox))
 		{
+			tile_hovered = tile[i];
+
 			if (input_manager->mouseClicked(BUTTON_LEFT))
 				SDL_SetRenderDrawColor(param.getRenderer(), 128, 64, 64, 128);
 			else if (input_manager->mouseMaintained(BUTTON_LEFT))
@@ -277,6 +329,11 @@ void TileMap::proc(InputManager* input_manager)
 		}
 
 		entity[i]->proc(param.getRenderer());
+
+		if (tile_hovered != NULL && input_manager->mouseClicked(BUTTON_LEFT))
+		{
+			entity[i]->goTo(tile_hovered->getCoordinate(), tile, MAX_TILE);
+		}
 	}
 
 	Scene::proc(input_manager);
@@ -320,6 +377,7 @@ void TileMap::load(const char *file_name)
 
 	std::cout << "Loading map ... \"" << file_path << "\"" << std::endl;
 
+	Uint32 time = SDL_GetTicks();
 
 	int nb_tiles = 0;
 	int nb_lines = 0;
@@ -339,7 +397,7 @@ void TileMap::load(const char *file_name)
 		{
 			std::string strTile, strTile_x, strTile_y, strTile_type, strTile_walkable;
 			TileType tile_type;
-			int tile_walkable;
+			WD_Direction tile_walkable;
 			SDL_Point tileCoo;
 			int comma_idx[3];
 //			int same_pos_tile = 0;
@@ -366,7 +424,7 @@ void TileMap::load(const char *file_name)
 			tileCoo.x		= atoi(strTile_x.c_str());
 			tileCoo.y		= atoi(strTile_y.c_str());
 			tile_type		= Tile::getTiletype(strTile_type.c_str());
-			tile_walkable	= 0;//Tile::getTileDir(strTile_walkable);
+			tile_walkable	= Tile::getTileDirection(strTile_walkable.c_str());
 
 //			printf("> %d,%d,%d,%d\r\n", tileCoo.x, tileCoo.y, tile_type, tile_walkable);
 
@@ -379,7 +437,7 @@ void TileMap::load(const char *file_name)
 //			if (same_pos_tile > 0)
 //				console->log(log_t::WARNING, "Already have %d tile%s on this position (x:%d y:%d)", same_pos_tile, (same_pos_tile == 1) ? "" : "s", params.x, params.y);
 
-			addTile("Tile", tile_type, tileCoo);
+			addTile("Tile", tile_type, tileCoo, tile_walkable);
 
 			nb_tiles++;
 
@@ -388,7 +446,9 @@ void TileMap::load(const char *file_name)
 		}
 	}
 
-	std::cout << "Successfully load map " << file_name << " (" << nb_tiles << " Tiles in " << nb_lines << " Lines)" << std::endl;
+	time = SDL_GetTicks() - time;
+
+	std::cout << "Successfully load map " << file_name << " (" << nb_tiles << " Tiles in " << time << "ms)" << std::endl;
 
 	config.close();
 }

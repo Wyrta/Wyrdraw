@@ -41,7 +41,7 @@ int Game::ready(void)
 	button->on_hover = (SDL_Color){128, 128, 128, SDL_ALPHA_OPAQUE};
 
 	player = new Entity("Player1");
-	player->setCoordinate({0,0});
+	player->setTile(map->getTile({0,0}));
 	player->setTexture(createTexture(param.getRenderer(), NULL, "../assets/img/npcTest.png"));
 	map->addEntity(player);
 
@@ -58,47 +58,24 @@ int Game::proc(InputManager* input_manager)
 
 	if (input_manager->keyMaintained(SDLK_d))
 	{
-		map->move({-5, 0});
+		player->walk({1, 0});
 	}
-	if (input_manager->keyMaintained(SDLK_q))
+	else if (input_manager->keyMaintained(SDLK_q))
 	{
-		map->move({5, 0});
+		player->walk({-1, 0});
 	}
-	if (input_manager->keyMaintained(SDLK_z))
+	else if (input_manager->keyMaintained(SDLK_z))
 	{
-		map->move({0, 5});
+		player->walk({0, -1});
 	}
-	if (input_manager->keyMaintained(SDLK_s))
+	else if (input_manager->keyMaintained(SDLK_s))
 	{
-		map->move({0, -5});
-	}
-	if (input_manager->keyPressed(SDLK_SPACE))
-	{
-		Text* item = (Text* )(map->getItem(0));
-		item->setBackground(!item->hasBackground());
-	}
-
-	if (input_manager->keyMaintained(SDLK_d))
-	{
-		player->move({1, 0});
-	}
-	if (input_manager->keyMaintained(SDLK_q))
-	{
-		player->move({-1, 0});
-	}
-	if (input_manager->keyMaintained(SDLK_z))
-	{
-		player->move({0, -1});
-	}
-	if (input_manager->keyMaintained(SDLK_s))
-	{
-		player->move({0, 1});
+		player->walk({0, 1});
 	}
 	if (input_manager->keyMaintained(SDLK_SPACE))
 	{
 		player->takeDamages(2);
 	}
-
 	map->proc(input_manager);
 
 	return (0);

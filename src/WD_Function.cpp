@@ -21,6 +21,41 @@ bool operator!=(WD_Size size1, WD_Size size2)
 		return (false);
 }
 
+bool operator==(SDL_Point pos1, SDL_Point pos2)
+{
+	if (pos1.x == pos2.x && pos1.y == pos2.y)
+		return (true);
+	else
+		return (false);
+}
+
+bool operator!=(SDL_Point pos1, SDL_Point pos2)
+{
+	if (pos1.x != pos2.x || pos1.y != pos2.y)
+		return (true);
+	else
+		return (false);
+}
+
+
+SDL_Point operator-(SDL_Point pos1, SDL_Point pos2)
+{
+	SDL_Point res;
+	res.x = pos1.x - pos2.x;
+	res.y = pos1.y - pos2.y;
+
+	return (res);
+}
+
+
+SDL_Point operator+(SDL_Point pos1, SDL_Point pos2)
+{
+	SDL_Point res;
+	res.x = pos1.x + pos2.x;
+	res.y = pos1.y + pos2.y;
+
+	return (res);
+}
 
 bool RectCollide(SDL_Rect rect1, SDL_Rect rect2)
 {
@@ -108,4 +143,24 @@ bool isRectEmpty(SDL_Rect rect)
 		return (true);
 	else
 		return (false);
+}
+
+std::string printDirection(WD_Direction dir)
+{
+    #define PROCESS_VAL(p) case(p): return #p;
+        switch(dir){
+			PROCESS_VAL(NORTH);
+			PROCESS_VAL(NORTH_WEST);
+			PROCESS_VAL(NORTH_EAST);
+			PROCESS_VAL(SOUTH);
+			PROCESS_VAL(SOUTH_WEST);
+			PROCESS_VAL(SOUTH_EAST);
+			PROCESS_VAL(WEST);
+			PROCESS_VAL(EAST);
+			PROCESS_VAL(ALL);
+			PROCESS_VAL(NONE);
+        }
+    #undef PROCESS_VAL
+
+	return ((std::string)"ERROR");
 }

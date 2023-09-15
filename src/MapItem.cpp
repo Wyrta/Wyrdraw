@@ -2,7 +2,7 @@
 #include <WD_Function.hpp>
 
 
-WD_Size MapItem::tile_size =  (WD_Size){64,64};
+WD_Size MapItem::tile_size = (WD_Size){64,64};
 
 MapItem::MapItem() : GraphicItem()
 {
