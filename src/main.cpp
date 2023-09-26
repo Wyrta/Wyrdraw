@@ -8,6 +8,8 @@
 #include "Parameters.hpp"
 #include "InputManager.hpp"
 #include "Text.hpp"
+#include "Cursor.hpp"
+
 
 #define APP_NAME	"Wyrdraw engine"
 
@@ -94,6 +96,8 @@ int main(int argc, char **argv)
 	int last_tick_duration = 0;
 	Text tick_number("", WD_SIZE_FIT_CONTENT, COLOR_BLACK, (SDL_Color){128,128,128,128});
 
+	Cursor cursor;
+
 	while (game.run() && !input_manager.doQuit())
 	{
 		param.setTick(game.tick_number);
@@ -105,6 +109,12 @@ int main(int argc, char **argv)
 		tick_number.setText(text_buffer);
 		
 		game.proc(&input_manager);
+
+		SDL_Rect hitbox_cursor = cursor.getHitbox();
+		hitbox_cursor.x = input_manager.mouseCoordinate().x;
+		hitbox_cursor.y = input_manager.mouseCoordinate().y;
+		cursor.setHitbox(hitbox_cursor);
+		cursor.render(param.getRenderer());
 
 		// proc all
 
