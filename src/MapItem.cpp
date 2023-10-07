@@ -16,12 +16,12 @@ MapItem::~MapItem()
 
 }
 
-void MapItem::render(SDL_Renderer* render)
+void MapItem::render(SDL_Renderer* render, SDL_Point offset)
 {
 	SDL_Rect new_hitbox = getHitbox();
 
-	new_hitbox.x = coordinate.x * MapItem::tile_size.w;
-	new_hitbox.y = coordinate.y * MapItem::tile_size.h;
+	new_hitbox.x = (coordinate.x * MapItem::tile_size.w) + offset.x;
+	new_hitbox.y = (coordinate.y * MapItem::tile_size.h) + offset.y;
 
 	if (map_coordinate != NULL)
 	{

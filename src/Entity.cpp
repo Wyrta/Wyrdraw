@@ -76,8 +76,44 @@ void Entity::proc(SDL_Renderer* render)
 			pathfinder = NULL;
 		}
 	}
+	
+	SDL_Point offset = {0,0};
 
-	MapItem::render(render);
+	if (last_move * speed < 1)
+	{
+		WD_Size step;
+		step.w = MapItem::tile_size.w - (MapItem::tile_size.w * last_move * speed);
+		step.h = MapItem::tile_size.h - (MapItem::tile_size.h * last_move * speed);
+
+		switch (orientation)
+		{
+			case WD_Direction::NORTH:
+				offset.y = step.h;
+				break;
+			case WD_Direction::SOUTH:
+				offset.y = -step.h;
+				break;
+			case WD_Direction::WEST:
+				offset.x = step.w;
+				break;
+			case WD_Direction::EAST:
+				offset.x = -step.w;
+				break;
+			case WD_Direction::NORTH_WEST:
+			case WD_Direction::SOUTH_WEST:
+			case WD_Direction::NORTH_EAST:
+			case WD_Direction::SOUTH_EAST:
+			case WD_Direction::ALL:
+				std::cout << "Entity direction not supported" << std::endl;
+			case WD_Direction::NONE:
+			default:
+				break;
+		}
+
+		std::cout << printPoint(offset) << std::endl;
+	}
+
+	MapItem::render(render, offset);
 	if (do_print_health)
 		printHealthBar(render);
 

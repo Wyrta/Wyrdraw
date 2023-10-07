@@ -15,7 +15,7 @@ class MapItem : public GraphicItem
 		MapItem();
 		~MapItem();
 
-		void render(SDL_Renderer* render);
+		void render(SDL_Renderer* render, SDL_Point offset = {0,0});
 
 		SDL_Point getCoordinate(void);
 		void setCoordinate(SDL_Point new_coordinate);
