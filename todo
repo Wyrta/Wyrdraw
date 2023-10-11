@@ -4,8 +4,6 @@ class Animation ?
 
 GUI.hpp header w/ button, text,...
 
-custom cursor ? 
-
 GraphicItem animation
 
 GraphicItem MapItem : moveIn(SDL_Point, int) move to xy in z tick

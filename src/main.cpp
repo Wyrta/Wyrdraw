@@ -10,6 +10,8 @@
 #include "Text.hpp"
 #include "Cursor.hpp"
 
+#include "Animation.hpp"
+
 
 #define APP_NAME	"Wyrdraw engine"
 
@@ -98,6 +100,15 @@ int main(int argc, char **argv)
 
 	Cursor cursor;
 
+	Animation animation(3);
+
+	animation.addFrame("../assets/img/tinybush_1.png", render);
+	animation.addFrame("../assets/img/tinybush_2.png", render);
+	animation.addFrame("../assets/img/tinybush_3.png", render);
+	animation.addFrame("../assets/img/tinybush_4.png", render);
+
+	animation.setFrameRate(1);
+
 	while (game.run() && !input_manager.doQuit())
 	{
 		param.setTick(game.tick_number);
@@ -115,6 +126,11 @@ int main(int argc, char **argv)
 		hitbox_cursor.y = input_manager.mouseCoordinate().y;
 		cursor.setHitbox(hitbox_cursor);
 		cursor.render(param.getRenderer());
+
+
+		SDL_Texture* texture = animation.getNextFrame();
+		if (texture != NULL)
+			SDL_RenderCopy(render, texture, NULL, NULL);
 
 		// proc all
 

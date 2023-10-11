@@ -276,12 +276,12 @@ void TileMap::followEntity(void)
 
 	if (proc_speed)
 	{
-		WD_Size entitySpeed;
-		entitySpeed.w = followed->getSpeed() * Tile::tile_size.w;
-		entitySpeed.h = followed->getSpeed() * Tile::tile_size.h;
+		WD_Size entity_speed;
+		entity_speed.w = followed->getSpeed() * Tile::tile_size.w;
+		entity_speed.h = followed->getSpeed() * Tile::tile_size.h;
 
-		speed.w = (speed.w <= entitySpeed.w) ? speed.w+1 : entitySpeed.w;
-		speed.h = (speed.h <= entitySpeed.h) ? speed.h+1 : entitySpeed.h;
+		speed.w = (speed.w <= entity_speed.w) ? speed.w+1 : entity_speed.w;
+		speed.h = (speed.h <= entity_speed.h) ? speed.h+1 : entity_speed.h;
 	}
 	else
 	{
