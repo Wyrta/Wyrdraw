@@ -109,8 +109,6 @@ void Entity::proc(SDL_Renderer* render)
 			default:
 				break;
 		}
-
-		std::cout << printPoint(offset) << std::endl;
 	}
 
 	MapItem::render(render, offset);
@@ -229,6 +227,13 @@ bool Entity::goTo(SDL_Point coo, Tile **tilemap, int size)
 
 	return (true);
 }
+
+
+float Entity::getSpeed(void)
+{
+	return (speed);
+}
+
 
 char *Entity::talk(void)
 {

@@ -245,6 +245,52 @@ void TileMap::followEntity(void)
 	map_coordinate.x = (-entity_coordinate.x - entity_size.w/2) + (screen.w/2);
 	map_coordinate.y = (-entity_coordinate.y - entity_size.h/2) + (screen.h/2);
 
+	map_coordinate = map_coordinate - coordinate;
+
+	static WD_Size speed = {10,10};
+	bool proc_speed = false;
+
+	if (map_coordinate.x > speed.w)
+	{
+		map_coordinate.x = speed.w;
+		proc_speed = true;
+	}	
+
+	if (map_coordinate.y > speed.h)
+	{
+		map_coordinate.y = speed.h;
+		proc_speed = true;
+	}
+	
+	if (map_coordinate.x < -speed.w)
+	{
+		map_coordinate.x = -speed.w;
+		proc_speed = true;
+	}
+
+	if (map_coordinate.y < -speed.h)
+	{
+		map_coordinate.y = -speed.h;
+		proc_speed = true;
+	}
+
+	if (proc_speed)
+	{
+		WD_Size entitySpeed;
+		entitySpeed.w = followed->getSpeed() * Tile::tile_size.w;
+		entitySpeed.h = followed->getSpeed() * Tile::tile_size.h;
+
+		speed.w = (speed.w <= entitySpeed.w) ? speed.w+1 : entitySpeed.w;
+		speed.h = (speed.h <= entitySpeed.h) ? speed.h+1 : entitySpeed.h;
+	}
+	else
+	{
+		speed.w = speed.w/2;
+		speed.h = speed.h/2;
+	}
+
+	map_coordinate = map_coordinate + coordinate;
+
 	setCoordinate(map_coordinate);
 }
 

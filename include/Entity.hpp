@@ -44,6 +44,8 @@ class Entity : public MapItem
 		bool walkTo(SDL_Point coo, Tile* tile = NULL);
 		bool goTo(SDL_Point coo, Tile **tilemap, int size);
 
+		float getSpeed(void);
+
 
 		char *talk(void);
 
