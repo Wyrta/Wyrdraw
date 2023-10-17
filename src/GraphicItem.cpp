@@ -37,7 +37,7 @@ void GraphicItem::proc(void)
 		src = mask;
 	}
 
-	renderQueue->addItem((new RenderItem())->setTexture(texture, src, dst));
+	renderQueue->addItem((new RenderItem(blur))->setTexture(texture, src, dst));
 }
 
 

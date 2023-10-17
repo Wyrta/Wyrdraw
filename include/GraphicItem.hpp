@@ -14,6 +14,8 @@ class GraphicItem
 
 		bool const_texture;
 
+		int blur = 1;
+
     public:
 		GraphicItem();
 		~GraphicItem();
@@ -30,6 +32,8 @@ class GraphicItem
 		SDL_Texture* getTexture(void);
 		void setTexture(SDL_Texture* new_texture);
 		void setConstTexture(bool isConst);
+
+		void setBlur(int blr) {blur = blr;}
 
 		static GraphicItem* newGraphicItem(const char* path, SDL_Rect hitbox = EMPTY_RECT, SDL_Rect mask = EMPTY_RECT);
 };

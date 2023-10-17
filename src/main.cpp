@@ -102,6 +102,9 @@ int main(int argc, char **argv)
 	char text_buffer[64];
 	int last_tick_duration = 0;
 	Text tick_number("", WD_SIZE_FIT_CONTENT, COLOR_BLACK, (SDL_Color){128,128,128,128});
+	tick_number.setCoordinate({2, 2});
+	Text render_info("", WD_SIZE_FIT_CONTENT, COLOR_BLACK, (SDL_Color){128,128,128,128});
+	render_info.setCoordinate({2, 30});
 
 	Cursor cursor;
 
@@ -112,9 +115,6 @@ int main(int argc, char **argv)
 		input_manager.proc();
 
 
-		snprintf(text_buffer, 64, "Tick duration %dms - Tick number %d", last_tick_duration, param.getTick());
-		tick_number.setText(text_buffer);
-		
 		game.proc(&input_manager);
 
 		SDL_Rect hitbox_cursor = cursor.getHitbox();
@@ -123,8 +123,15 @@ int main(int argc, char **argv)
 		cursor.setHitbox(hitbox_cursor);
 		cursor.proc();
 
-		// proc all
+		snprintf(text_buffer, 64, "Tick duration %dms - Tick number %d", last_tick_duration, param.getTick());
+		tick_number.setText(text_buffer);
 		tick_number.proc(false, false, false);
+
+		snprintf(text_buffer, 64, "Render duration %dus - Number item rendered %d", renderQueue->last_render_duration, renderQueue->number_item_rendered);
+		render_info.setText(text_buffer);
+		render_info.proc(false, false, false);
+
+
 
 		renderQueue->render();
 
@@ -135,8 +142,7 @@ int main(int argc, char **argv)
 			SDL_Delay(wait);
 
 		// clean render area
-		SDL_SetRenderDrawColor(render, 0, 0, 0, SDL_ALPHA_OPAQUE);
-		SDL_RenderFillRect(param.getRenderer(), &screen);
+		renderQueue->addItem((new RenderItem())->setRectangle(param.getScreen(), COLOR_BLACK));
 
 		last_tick = SDL_GetTicks();
 	}

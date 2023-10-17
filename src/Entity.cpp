@@ -110,7 +110,7 @@ void Entity::proc(void)
 				break;
 		}
 	}
-
+	setBlur(5);
 	MapItem::proc(offset);
 	if (do_print_health)
 		printHealthBar();

@@ -378,7 +378,7 @@ void TileMap::proc(InputManager* input_manager)
 			entity_hitbox = entity[i]->getHitbox();
 		}
 
-		entity[i]->proc(param.getRenderer());
+		entity[i]->proc();
 
 		if (tile_hovered != NULL && input_manager->mouseClicked(BUTTON_LEFT))
 		{

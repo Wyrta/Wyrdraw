@@ -143,6 +143,9 @@ void RenderQueue::render(void)
 	auto stop = std::chrono::high_resolution_clock::now();
 	int duration = (std::chrono::duration_cast<std::chrono::microseconds>(stop - start)).count();
 
+	last_render_duration = duration;
+	number_item_rendered = number_rendered;
+
 	// std::cout << "Rendered: " << number_rendered << "items int " << duration << "us" << std::endl;
 }
 

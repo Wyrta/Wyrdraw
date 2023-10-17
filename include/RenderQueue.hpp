@@ -56,5 +56,8 @@ class RenderQueue
 
 		void render(void);
 
+		int last_render_duration;
+		int number_item_rendered;
+
 };
 #endif // _renderqueue_hpp_

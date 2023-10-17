@@ -89,8 +89,9 @@ void InputManager::pollEvent(void)
 				if (this->event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
 				{
 					int width, height;
-					SDL_GetWindowSize(param.getWindow(), &width, &height);
+					SDL_GetRendererOutputSize(param.getRenderer(), &width, &height);
 					param.setSreenDim(width, height);
+					std::cout << "Window size changed " << width << " x " <<  height << std::endl;
 				}
 				
 			} break;
@@ -126,12 +127,12 @@ void InputManager::pollEvent(void)
 					//console->log("Wheel LEFT");	// ...
 				}
 
-			}break;
+			} break;
 			case SDL_KEYDOWN: {
 				if (keyPressed(SDL_SCANCODE_ESCAPE))	/* ESCAPE */
 					quit = true;
 
-				std::cout << "Key pressed: " << event.key.keysym.scancode << std::endl;
+				// std::cout << "Key pressed: " << event.key.keysym.scancode << std::endl;
 
 			} break;
 			case SDL_KEYUP: {
