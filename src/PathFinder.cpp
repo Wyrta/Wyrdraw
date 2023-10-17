@@ -351,7 +351,7 @@ void PathFinder::find(void)
 	current_path = -1;
 }
 
-void PathFinder::print_path(SDL_Renderer* render)
+void PathFinder::print_path(void)
 {
 	SDL_Rect hitbox;
 

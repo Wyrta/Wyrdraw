@@ -26,7 +26,7 @@ GraphicItem::~GraphicItem()
 	}
 }
 
-void GraphicItem::render(SDL_Renderer* render)
+void GraphicItem::proc(void)
 {
 	SDL_Rect src = {0,0,0,0}, dst;
 

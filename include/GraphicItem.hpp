@@ -18,7 +18,7 @@ class GraphicItem
 		GraphicItem();
 		~GraphicItem();
 
-		void render(SDL_Renderer* render);
+		void proc(void);
 
 		SDL_Rect getHitbox(void);
 		void setHitbox(SDL_Rect new_hitbox);

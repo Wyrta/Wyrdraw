@@ -53,7 +53,7 @@ class PathFinder
 		Path* getNext(SDL_Point coordinate);
 		Path* getPrevious(SDL_Point coordinate);
 
-		void print_path(SDL_Renderer* render);
+		void print_path(void);
 
 };
 #endif // _pathfinder_hpp_

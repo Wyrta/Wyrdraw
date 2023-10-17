@@ -33,9 +33,8 @@ void Entity::setTile(Tile* tile)
 }
 
 
-void Entity::printHealthBar(SDL_Renderer* render)
+void Entity::printHealthBar(void)
 {
-
 	SDL_Rect health_bar = getHitbox();
 	//health_bar.x;
 	health_bar.y = health_bar.y - 20;
@@ -58,7 +57,7 @@ void Entity::printHealthBar(SDL_Renderer* render)
 
 
 
-void Entity::proc(SDL_Renderer* render)
+void Entity::proc(void)
 {
 	// if current_tile deal damages ?
 
@@ -69,7 +68,7 @@ void Entity::proc(SDL_Renderer* render)
 		if (path != NULL)
 		{
 			walkTo(path->coordinate);
-			pathfinder->print_path(render);
+			pathfinder->print_path();
 		}
 		else
 		{
@@ -112,9 +111,9 @@ void Entity::proc(SDL_Renderer* render)
 		}
 	}
 
-	MapItem::render(render, offset);
+	MapItem::proc(offset);
 	if (do_print_health)
-		printHealthBar(render);
+		printHealthBar();
 
 	last_move++;
 }

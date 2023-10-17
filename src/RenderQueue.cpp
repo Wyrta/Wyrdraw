@@ -119,7 +119,6 @@ void RenderQueue::addItem(RenderItem* item)
 
 void RenderQueue::render(void)
 {
-	uint64_t average = 0;
 	int number_rendered = 0;
 
 	auto start = std::chrono::high_resolution_clock::now();

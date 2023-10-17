@@ -16,7 +16,7 @@ MapItem::~MapItem()
 
 }
 
-void MapItem::render(SDL_Renderer* render, SDL_Point offset)
+void MapItem::proc(SDL_Point offset)
 {
 	SDL_Rect new_hitbox = getHitbox();
 
@@ -31,7 +31,7 @@ void MapItem::render(SDL_Renderer* render, SDL_Point offset)
 
 	setHitbox(new_hitbox);
 
-	GraphicItem::render(render);
+	GraphicItem::proc();
 }
 
 

@@ -28,7 +28,7 @@ class Entity : public MapItem
 
 		int health;
 		bool do_print_health;
-		void printHealthBar(SDL_Renderer* render);
+		void printHealthBar(void);
 
 		Tile* current_tile;
 
@@ -38,7 +38,7 @@ class Entity : public MapItem
 
 		void setTile(Tile* tile);
 
-		void proc(SDL_Renderer* render);
+		void proc(void);
 
 		bool walk(SDL_Point diff, Tile* tile = NULL);
 		bool walkTo(SDL_Point coo, Tile* tile = NULL);

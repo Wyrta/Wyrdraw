@@ -339,7 +339,7 @@ void TileMap::proc(InputManager* input_manager)
 			tile_hitbox = tile[i]->getHitbox();
 		}
 
-		tile[i]->render(param.getRenderer());
+		tile[i]->proc();
 
 		SDL_Point mouse = input_manager->mouseCoordinate();
 

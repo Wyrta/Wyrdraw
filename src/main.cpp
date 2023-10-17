@@ -121,7 +121,7 @@ int main(int argc, char **argv)
 		hitbox_cursor.x = input_manager.mouseCoordinate().x;
 		hitbox_cursor.y = input_manager.mouseCoordinate().y;
 		cursor.setHitbox(hitbox_cursor);
-		cursor.render(param.getRenderer());
+		cursor.proc();
 
 		// proc all
 		tick_number.proc(false, false, false);
