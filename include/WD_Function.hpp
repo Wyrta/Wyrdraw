@@ -29,6 +29,8 @@ bool operator==(WD_Size size1, WD_Size size2);
 bool operator!=(WD_Size size1, WD_Size size2);
 bool operator==(SDL_Point pos1, SDL_Point pos2);
 bool operator!=(SDL_Point pos1, SDL_Point pos2);
+bool operator==(SDL_Rect rect, int value);
+bool operator!=(SDL_Rect rect, int value);
 SDL_Point operator-(SDL_Point pos1, SDL_Point pos2);
 SDL_Point operator+(SDL_Point pos1, SDL_Point pos2);
 

@@ -2,8 +2,10 @@
 
 #include "WD_Type.hpp"
 #include "Parameters.hpp"
+#include "RenderQueue.hpp"
 
 extern Parameters param;
+extern RenderQueue* renderQueue;
 
 Button::Button(const char* content, WD_Size size) : text(content, size, COLOR_BLACK, COLOR_GREY)
 {
@@ -50,16 +52,15 @@ void Button::proc(bool clicked, bool hovered, bool maintained)
 
 	text.setCoordinate(getCoordinate());
 
-
+	SDL_Color color = normal;;
 	if (click || maintain)
-		SDL_SetRenderDrawColor(param.getRenderer(), on_click.r, on_click.g, on_click.b, normal.a);
+		color = on_click; 
 	else if (hover)
-		SDL_SetRenderDrawColor(param.getRenderer(), on_hover.r, on_hover.g, on_hover.b, normal.a);
-	else
-		SDL_SetRenderDrawColor(param.getRenderer(), normal.r, normal.g, normal.b, normal.a);
+		color = on_hover;
 
+	color.a = normal.a;
 	SDL_Rect hitbox = getHitbox();
-	SDL_RenderFillRect(param.getRenderer(), &hitbox);
+	renderQueue->addItem((new RenderItem())->setRectangle(hitbox, color));
 
 	text.proc(click, hover, maintain);
 }

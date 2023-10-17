@@ -3,7 +3,9 @@
 #include "Parameters.hpp"
 #include "WD_Function.hpp"
 #include <iostream>
+#include "RenderQueue.hpp"
 
+extern RenderQueue* renderQueue;
 extern Parameters param;
 
 Text::Text(const char* content, WD_Size size, SDL_Color txt_color)
@@ -87,12 +89,13 @@ void Text::proc(bool clicked, bool hovered, bool maintained)
 
 	if (has_background)
 	{
-		SDL_SetRenderDrawColor(param.getRenderer(), background_color.r, background_color.g, background_color.b, background_color.a);
-		SDL_RenderFillRect(param.getRenderer(), &hitbox);
+	renderQueue->addItem((new RenderItem())->setRectangle(hitbox, background_color));
+
 	}
 
 	if (texture != NULL)
-		SDL_RenderCopy(param.getRenderer(), texture, NULL, &texture_hitbox);
+		renderQueue->addItem((new RenderItem())->setTexture(texture, {0,0,0,0}, texture_hitbox));
+
 }
 
 

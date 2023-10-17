@@ -9,6 +9,7 @@
 #include "InputManager.hpp"
 #include "Text.hpp"
 #include "Cursor.hpp"
+#include "RenderQueue.hpp"
 
 #include "Animation.hpp"
 
@@ -17,6 +18,8 @@
 
 
 Parameters param;
+RenderQueue* renderQueue;
+
 
 SDL_Window* createWindow(SDL_Rect screen, const char* window_name);
 SDL_Renderer* createRenderer(SDL_Window* window);
@@ -86,6 +89,8 @@ int main(int argc, char **argv)
 	param.setWindow(window);
 	param.setRenderer(render);
 
+	renderQueue = new RenderQueue(render);
+
 	InputManager input_manager;
 
 	Tile::loadTexture();
@@ -99,15 +104,6 @@ int main(int argc, char **argv)
 	Text tick_number("", WD_SIZE_FIT_CONTENT, COLOR_BLACK, (SDL_Color){128,128,128,128});
 
 	Cursor cursor;
-
-	Animation animation(3);
-
-	animation.addFrame("../assets/img/tinybush_1.png", render);
-	animation.addFrame("../assets/img/tinybush_2.png", render);
-	animation.addFrame("../assets/img/tinybush_3.png", render);
-	animation.addFrame("../assets/img/tinybush_4.png", render);
-
-	animation.setFrameRate(1);
 
 	while (game.run() && !input_manager.doQuit())
 	{
@@ -127,16 +123,11 @@ int main(int argc, char **argv)
 		cursor.setHitbox(hitbox_cursor);
 		cursor.render(param.getRenderer());
 
-
-		SDL_Texture* texture = animation.getNextFrame();
-		if (texture != NULL)
-			SDL_RenderCopy(render, texture, NULL, NULL);
-
 		// proc all
-
 		tick_number.proc(false, false, false);
-		SDL_RenderPresent(param.getRenderer());
-		
+
+		renderQueue->render();
+
 		Uint32 current_tick = SDL_GetTicks();
 		last_tick_duration = (current_tick - last_tick);
 		Uint32 wait = param.getTicksDuration() - last_tick_duration;

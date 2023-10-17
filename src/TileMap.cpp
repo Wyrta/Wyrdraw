@@ -1,10 +1,12 @@
 #include "TileMap.hpp"
 #include <iostream>
 #include "Parameters.hpp"
+#include "RenderQueue.hpp"
 
 #include <fstream>
 #include <string>
 
+extern RenderQueue* renderQueue;
 extern Parameters param;
 
 TileMap::TileMap(const char* name)
@@ -344,15 +346,17 @@ void TileMap::proc(InputManager* input_manager)
 		if (SDL_PointInRect(&mouse, &tile_hitbox))
 		{
 			tile_hovered = tile[i];
-
+			
+			SDL_Color color;
 			if (input_manager->mouseClicked(BUTTON_LEFT))
-				SDL_SetRenderDrawColor(param.getRenderer(), 128, 64, 64, 128);
+				color = {128, 64, 64, 128};
 			else if (input_manager->mouseMaintained(BUTTON_LEFT))
-				SDL_SetRenderDrawColor(param.getRenderer(), 255, 0, 0, 64);
+				color = {255, 0, 0, 64};
 			else
-				SDL_SetRenderDrawColor(param.getRenderer(), 255, 255, 255, 64);
+				color = {255, 255, 255, 64};
 
-			SDL_RenderFillRect(param.getRenderer(), &tile_hitbox);
+			renderQueue->addItem((new RenderItem())->setRectangle(tile_hitbox, color));
+
 		}
 
 		number_tile_printed++;

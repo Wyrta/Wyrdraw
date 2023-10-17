@@ -1,8 +1,12 @@
 #include <GraphicItem.hpp>
-
 #include <iostream>
-#include <WD_Type.hpp>
-#include <WD_Function.hpp>
+
+#include "RenderQueue.hpp"
+#include "WD_Type.hpp"
+#include "WD_Function.hpp"
+#include "RenderQueue.hpp"
+
+extern RenderQueue* renderQueue;
 
 GraphicItem::GraphicItem()
 {
@@ -24,23 +28,16 @@ GraphicItem::~GraphicItem()
 
 void GraphicItem::render(SDL_Renderer* render)
 {
-	int err = 0;
-
-	SDL_Rect *src = NULL, dst;
+	SDL_Rect src = {0,0,0,0}, dst;
 
 	dst = hitbox;
-	
+
 	if (!isRectEmpty(mask))
 	{
-		src = &mask;
+		src = mask;
 	}
 
-	err = SDL_RenderCopy(render, texture, src, &dst);
-
-	if (err < 0)
-	{
-		std::cerr << "[GraphicItem] Error: render error \"" << SDL_GetError() << "\"" << std::endl;
-	}
+	renderQueue->addItem((new RenderItem())->setTexture(texture, src, dst));
 }
 
 

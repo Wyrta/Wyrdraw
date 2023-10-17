@@ -2,6 +2,10 @@
 #include "SDL2/SDL.h"
 #include <iostream>
 #include "WD_Function.hpp"
+#include "RenderQueue.hpp"
+
+extern RenderQueue* renderQueue;
+
 
 Entity::Entity(const char* e_name) : MapItem()
 {
@@ -38,21 +42,18 @@ void Entity::printHealthBar(SDL_Renderer* render)
 	//health_bar.w = health_bar.w * health / 100;
 	health_bar.h = 16;
 
-	SDL_SetRenderDrawColor(render, 117, 69, 11, 255);
-	SDL_RenderFillRect(render, &health_bar);
+	renderQueue->addItem((new RenderItem())->setRectangle(health_bar, {117, 69, 11, 255}));
 
 	health_bar.x += 2;
 	health_bar.y += 2;
 	health_bar.w -= 4;
 	health_bar.h -= 4;
 
-	SDL_SetRenderDrawColor(render, 92, 45, 6, 255);
-	SDL_RenderFillRect(render, &health_bar);
+	renderQueue->addItem((new RenderItem())->setRectangle(health_bar, {92, 45, 6, 255}));
 
 	health_bar.w = (int)((float)health_bar.w * (float)health / (float)100);
 
-	SDL_SetRenderDrawColor(render, 250, 68, 40, 255);
-	SDL_RenderFillRect(render, &health_bar);
+	renderQueue->addItem((new RenderItem())->setRectangle(health_bar, {250, 68, 40, 255}));
 }
 
 

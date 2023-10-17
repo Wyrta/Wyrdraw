@@ -4,7 +4,9 @@
 #include <iostream>
 
 #include "Parameters.hpp"
+#include "RenderQueue.hpp"
 
+extern RenderQueue* renderQueue;
 extern Parameters param;
 
 PathFinder::PathFinder()
@@ -329,9 +331,7 @@ void PathFinder::find(void)
 		path_length++;
 
 		SDL_Rect hitbox = tmp_tile->getHitbox();
-
-		SDL_SetRenderDrawColor(param.getRenderer(), 255, 0, 0, 32);
-		SDL_RenderFillRect(param.getRenderer(), &hitbox);
+		renderQueue->addItem((new RenderItem())->setRectangle(hitbox, {255, 0, 0, 32}));
 
 	} while (pos != dst);
 
@@ -353,7 +353,6 @@ void PathFinder::find(void)
 
 void PathFinder::print_path(SDL_Renderer* render)
 {
-	SDL_SetRenderDrawColor(render, 255, 0, 0, 32);
 	SDL_Rect hitbox;
 
 	for (int i = 0; i < MAX_PATH_LENGTH; i++)
@@ -362,7 +361,7 @@ void PathFinder::print_path(SDL_Renderer* render)
 		{
 //			std::cout << i << printRect(hitbox) << std::endl;
 			hitbox = itinerary[i]->tile->getHitbox();
-			SDL_RenderFillRect(render, &hitbox);
+			renderQueue->addItem((new RenderItem())->setRectangle(hitbox, {255, 0, 0, 32}));
 		}
 	}
 

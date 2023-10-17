@@ -38,6 +38,24 @@ bool operator!=(SDL_Point pos1, SDL_Point pos2)
 }
 
 
+bool operator==(SDL_Rect rect, int value)
+{
+	if (rect.x == value && rect.y == value && rect.w == value && rect.h == value)
+		return (true);
+	else
+		return (false);
+}
+
+
+bool operator!=(SDL_Rect rect, int value)
+{
+	if (rect.x != value || rect.y != value || rect.w != value || rect.h != value)
+		return (true);
+	else
+		return (false);
+}
+
+
 SDL_Point operator-(SDL_Point pos1, SDL_Point pos2)
 {
 	SDL_Point res;
