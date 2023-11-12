@@ -11,11 +11,9 @@
 #include <WD_Type.hpp>
 #include <string>
 
-#define printRect(rect)		"["<<#rect<<"] : x"<<rect.x<<" y" <<rect.y<<" w"<<rect.w<<" h"<<rect.h<<" "
-#define printPoint(point)	"["<<#point<<"] : x"<<point.x<<" y" <<point.y<<" "
-
 bool RectCollide(SDL_Rect rect1, SDL_Rect rect2);
-
+char* printRect(SDL_Rect rect);
+char* printPoint(SDL_Point point);
 
 SDL_Texture *createTexture(SDL_Renderer* render, SDL_Rect* rectangle, const char* path);
 TTF_Font *createFont(const char *path, int size);

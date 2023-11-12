@@ -2,7 +2,7 @@
 #include <cstring>
 #include "Parameters.hpp"
 #include "WD_Function.hpp"
-#include <iostream>
+#include "Log.hpp"
 #include "RenderQueue.hpp"
 
 extern RenderQueue* renderQueue;
@@ -145,5 +145,5 @@ void Text::align(Align align_to)
 		break;
 	}
 
-	std::cout << "Text::align(Align ) -> not implemented" << std::endl;
+	Log::debug("Text::align(Align ) -> not implemented");
 }

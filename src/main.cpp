@@ -1,4 +1,4 @@
-#include <iostream>
+#include "Log.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
@@ -27,7 +27,7 @@ int openAudio(void);
 
 int main(int argc, char **argv)
 {
-	std::cout << "Starting " << APP_NAME << std::endl;
+	Log::info("Starting %s", APP_NAME);
 
 	SDL_Rect screen;
 	screen.x = 0;
@@ -167,24 +167,24 @@ int openAudio(void)
 
 	if (audio < 0)
 	{
-		std::cout << "Error while init SDL audio\r\n";
+		Log::critical("Error while init SDL audio");
 		return (-1);
 	}
 	else
 	{
-		std::cout << "Init SDL audio\r\n";
+		Log::info("Init SDL audio");
 	}
 
 	mixer = Mix_Init(MIX_INIT_OGG);
 
 	if (mixer == 0)
 	{
-		std::cout << "Error while init SDL_Mixer audio\r\n";
+		Log::critical("Error while init SDL_Mixer audio");
 		return (-1);
 	}
 	else
 	{
-		std::cout << "Init SDL_Mixer audio\r\n";
+		Log::info("Init SDL_Mixer audio");
 	}
 
 	return (0);

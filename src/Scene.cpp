@@ -1,6 +1,6 @@
 #include "Scene.hpp"
 
-#include <iostream>
+#include "Log.hpp"
 #include "WD_Function.hpp"
 
 Scene::Scene()
@@ -21,8 +21,6 @@ Scene::~Scene()
 
 void Scene::proc(InputManager* input_manager)
 {
-//	std::cout << "Scene::proc" << std::endl;
-
 	if (!enable)
 		return;
 
@@ -51,7 +49,7 @@ void Scene::proc(InputManager* input_manager)
 				if (input_manager->mouseMaintained(BUTTON_LEFT))
 					maintain = true;
 
-				std::cout << printPoint(mouse) << printRect(hitbox) << std::endl;
+				Log::info("%s %s", printPoint(mouse), printRect(hitbox));
 			}
 		}
 

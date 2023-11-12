@@ -1,7 +1,7 @@
 #include "Animation.hpp"
 #include "WD_Function.hpp"
 
-#include <iostream>
+#include "Log.hpp"
 
 Animation::Animation(int frame_alloc_size)
 {

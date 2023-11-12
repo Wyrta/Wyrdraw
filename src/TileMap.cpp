@@ -1,5 +1,5 @@
 #include "TileMap.hpp"
-#include <iostream>
+#include "Log.hpp"
 #include "Parameters.hpp"
 #include "RenderQueue.hpp"
 
@@ -427,7 +427,7 @@ void TileMap::load(const char *file_name)
 		std::cerr << "Failed loading map " << file_path << " cant open file" << std::endl;
 	}
 
-	std::cout << "Loading map ... \"" << file_path << "\"" << std::endl;
+	Log::info("Loading map ... \"%s\"", file_path);
 
 	Uint32 time = SDL_GetTicks();
 
@@ -456,7 +456,7 @@ void TileMap::load(const char *file_name)
 
 			if (l_idx > r_idx)
 			{
-				std::cout << "Invalid index l_idx > r_idx (" << l_idx << " > " << r_idx << ")" << std::endl;
+				Log::error("Invalid index l_idx > r_idx (%d>%d)", l_idx, r_idx);
 				return;
 			}
 
@@ -500,7 +500,7 @@ void TileMap::load(const char *file_name)
 
 	time = SDL_GetTicks() - time;
 
-	std::cout << "Successfully load map " << file_name << " (" << nb_tiles << " Tiles in " << time << "ms)" << std::endl;
+	Log::info("Successfully load map %s (%d tiles) in %dms", file_name, nb_tiles, time);
 
 	config.close();
 }

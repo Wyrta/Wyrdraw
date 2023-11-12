@@ -1,7 +1,7 @@
 #include "WD_Function.hpp"
 #include "WD_Type.hpp"
 
-#include <iostream>
+#include "Log.hpp"
 
 
 
@@ -74,6 +74,26 @@ SDL_Point operator+(SDL_Point pos1, SDL_Point pos2)
 
 	return (res);
 }
+
+char* printRect(SDL_Rect rect)
+{
+	// char* buffer = (char* )"x0000 y0000 w0000 h0000";
+	// snprintf(buffer, 24, "x%d y%d w%d h%d", rect.x, rect.y, rect.w, rect.h);
+
+	return (" ");
+}
+
+
+char* printPoint(SDL_Point point)
+{
+	// char* buffer = (char* )"x0000 y0000";
+
+	// snprintf(buffer, 12, "x%d y%d", point.x, point.y);
+
+	return ("");
+}
+
+
 
 bool RectCollide(SDL_Rect rect1, SDL_Rect rect2)
 {

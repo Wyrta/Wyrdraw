@@ -1,5 +1,5 @@
 #include "Game.hpp"
-#include <iostream>
+#include "Log.hpp"
 
 #include "Parameters.hpp"
 #include "InputManager.hpp"
@@ -23,7 +23,7 @@ int Game::init(SDL_Rect* screen)
 
 int Game::ready(void)
 {
-	std::cout << "Game launched !" << std::endl;
+	Log::info("Game launched !");
 
 	map = new TileMap("test");
 

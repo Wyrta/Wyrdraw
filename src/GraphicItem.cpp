@@ -1,5 +1,5 @@
 #include <GraphicItem.hpp>
-#include <iostream>
+#include "Log.hpp"
 
 #include "RenderQueue.hpp"
 #include "WD_Type.hpp"

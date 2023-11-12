@@ -1,6 +1,6 @@
 #include "RenderQueue.hpp"
 #include <chrono>
-#include <iostream>
+#include "Log.hpp"
 #include "WD_Function.hpp"
 
 
@@ -112,7 +112,7 @@ void RenderQueue::addItem(RenderItem* item)
 	}
 
 	if (i == queue_size)
-		std::cout << "RenderQueue::queue to small: " << queue_size << std::endl;
+		Log::error("Render queue to small: %d", queue_size);
 }
 
 
@@ -145,7 +145,5 @@ void RenderQueue::render(void)
 
 	last_render_duration = duration;
 	number_item_rendered = number_rendered;
-
-	// std::cout << "Rendered: " << number_rendered << "items int " << duration << "us" << std::endl;
 }
 

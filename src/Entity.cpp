@@ -1,6 +1,6 @@
 #include "Entity.hpp"
 #include "SDL2/SDL.h"
-#include <iostream>
+#include "Log.hpp"
 #include "WD_Function.hpp"
 #include "RenderQueue.hpp"
 
@@ -107,7 +107,7 @@ SDL_Point Entity::procMove(void)
 			case NORTH_EAST:
 			case SOUTH_EAST:
 			case ALL:
-				std::cout << "Entity direction not supported" << std::endl;
+				Log::warn("Entity direction not supported");
 			case NONE:
 			default:
 				break;
@@ -182,16 +182,14 @@ bool Entity::walk(SDL_Point diff, Tile* tile)
 
 	if (diff.x > 1 || diff.x < -1 || diff.y > 1 || diff.y < -1)
 	{
-		std::cout << "Entity::walk(...) To far away : " << printPoint(coo) << printPoint(diff) << std::endl;
-		std::cout << "Try enable pathfinding" << std::endl;
+		Log::error("Entity::walk(...) To far away : %s %s", printPoint(coo), printPoint(diff));
+		Log::error("Try enable pathfinding");
 
 		return (false);
 	}
 
 	if (last_move * speed < 1)
 	{
-		// std::cout << "Entity::walk(...) Cannot walk yet : " << last_move << " * " << speed << " = " << last_move * speed << std::endl;
-
 		return (false);
 	}
 
@@ -220,13 +218,12 @@ bool Entity::walk(SDL_Point diff, Tile* tile)
 
 	if (tile == NULL)
 	{
-		// std::cout << "Entity::walk(...) No tile found : " << printDirection(dir) << std::endl;
+		Log::warn("No tile found : %s", printDirection(dir));
 		return (false);
 	}
 
 	if (!tile->canWalk(dir))
 	{
-		// std::cout << "Entity::walk(...) Cannot walk there : " << printDirection(dir) << std::endl;
 		return (false);
 	}
 
@@ -279,7 +276,7 @@ float Entity::getSpeed(void)
 
 char *Entity::talk(void)
 {
-	std::cout << "Entity::talk(void) not implemented" << std::endl;
+	Log::debug("Entity::talk(void) not implemented");
 
 return NULL;
 }
@@ -298,7 +295,7 @@ void Entity::takeDamages(int damage)
 
 int Entity::dealDamages(void)
 {
-	std::cout << "Entity::dealDamages(void) not implemented" << std::endl;
+	Log::debug("Entity::dealDamages(void) not implemented");
 	return (0);
 }
 
@@ -306,7 +303,6 @@ int Entity::dealDamages(void)
 
 void Entity::onDead(void)
 {
-	std::cout << name << "is dead" << std::endl;
-	std::cout << "Entity::onDead(void) not implemented" << std::endl;
-
+	Log::info("%s is dead", name);
+	Log::debug("Entity::onDead(void) not implemented");
 }

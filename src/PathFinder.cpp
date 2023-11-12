@@ -1,7 +1,7 @@
 #include "PathFinder.hpp"
 #include "WD_Function.hpp"
 
-#include <iostream>
+#include "Log.hpp"
 
 #include "Parameters.hpp"
 #include "RenderQueue.hpp"
@@ -24,8 +24,6 @@ PathFinder::PathFinder()
 
 	src = EMPTY_POINT;
 	dst = EMPTY_POINT;
-
-	std::cout << "aaa" << std::endl;
 }
 
 
@@ -257,8 +255,6 @@ Tile* PathFinder::findClosest(Tile* current_tile, WD_Direction target, WD_Direct
 		}
 	}
 
-	std::cout << printDirection(choice1) << number1 << ", " << printDirection(choice1) << number2 << std::endl;
-
 	if (number1 < number2)
 		tmp = current_tile->get(choice1);
 	else
@@ -270,7 +266,7 @@ Tile* PathFinder::findClosest(Tile* current_tile, WD_Direction target, WD_Direct
 
 void PathFinder::find(void)
 {
-	std::cout << "[PathFinder] : Start finding path from " << printPoint(src) << " to " << printPoint(dst) << std::endl;
+	Log::info("Start finding path from %s to %s", printPoint(src), printPoint(dst) );
 
 	if (src == dst)
 		return;
@@ -341,14 +337,12 @@ void PathFinder::find(void)
 
 		if (current_tile == next_tile)
 		{
-			std::cout << "[PathFinder] : Didn't find next tile " << printPoint(pos) << std::endl;
+			Log::error("Didn't find next tile %s", printPoint(pos));
 			return;
 		}
 
 		addPath(next_tile);
 		current_tile = next_tile;
-
-		// std::cout << "[PathFinder] : add tile " << printPoint(pos) << std::endl;
 
 		SDL_Rect hitbox = current_tile->getHitbox();
 		renderQueue->addItem((new RenderItem())->setRectangle(hitbox, {255, 0, 0, 32}));
@@ -358,7 +352,7 @@ void PathFinder::find(void)
 			return;
 	}
 
-	std::cout << "[PathFinder] : " << printPoint(src) << printPoint(dst) << "In " << path_length << " tiles" << std::endl;
+	Log::info("%s to %s in %d tiles", printPoint(src), printPoint(dst), path_length);
 
 	for (int i = 0; i < MAX_PATH_LENGTH; i++)
 	{
@@ -382,7 +376,6 @@ void PathFinder::print_path(void)
 	{
 		if (itinerary[i] != NULL)
 		{
-//			std::cout << i << printRect(hitbox) << std::endl;
 			hitbox = itinerary[i]->tile->getHitbox();
 			renderQueue->addItem((new RenderItem())->setRectangle(hitbox, {255, 0, 0, 32}));
 		}

@@ -1,6 +1,6 @@
 #include "Tile.hpp"
 
-#include <iostream>
+#include "Log.hpp"
 #include <fstream>
 #include <string>
 #include "WD_Function.hpp"
@@ -72,13 +72,13 @@ void Tile::loadTexture(void)
 
 	if (!config.is_open())
 	{
-		std::cout << "Failed to open tile config file" << std::endl;
+		Log::error("Failed to open tile config file");
 	}
 
 	TileType tile_type;
 	std::string file;
 
-	std::cout << "Load tiles..." << std::endl;
+	Log::info("Load tiles...");
 
 	/* reset tile */
 	for (int i = 0; i < TileType::LAST_TTYPE; i++)
@@ -108,8 +108,7 @@ void Tile::loadTexture(void)
 		texture[tile_type] = createTexture(param.getRenderer(), NULL, file.c_str());
 	}
 
-	std::cout << "Tiles loaded" << std::endl;
-
+	Log::info("Tiles loaded");
 
 	config.close();
 }

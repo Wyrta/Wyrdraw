@@ -2,7 +2,7 @@
 #include "Parameters.hpp"
 #include "Tile.hpp"
 
-#include <iostream>
+#include "Log.hpp"
 
 extern Parameters param;
 
@@ -102,7 +102,7 @@ void InputManager::pollEvent(void)
 					int width, height;
 					SDL_GetRendererOutputSize(param.getRenderer(), &width, &height);
 					param.setSreenDim(width, height);
-					std::cout << "Window size changed " << width << " x " <<  height << std::endl;
+					Log::info("Window size changed %dx%d", width, height);
 				}
 				
 			} break;
@@ -120,13 +120,13 @@ void InputManager::pollEvent(void)
 				{
 					// console->log("Wheel UP");	// Put code for handling "scroll up" here!
 					mouse.wheel++;
-					std::cout << "Wheel UP" << mouse.wheel << std::endl;
+					Log::debug("Wheel UP %d", mouse.wheel);
 				}
 				else if(event.wheel.y < 0) // scroll down
 				{
 					// console->log("Wheel DOWN");	// Put code for handling "scroll down" here!
 					mouse.wheel--;
-					std::cout << "Wheel DOWN" << mouse.wheel << std::endl;
+					Log::debug("Wheel DOWN %d", mouse.wheel);
 				}
 
 				if(event.wheel.x > 0) // scroll right
@@ -143,7 +143,7 @@ void InputManager::pollEvent(void)
 				if (keyPressed(SDL_SCANCODE_ESCAPE))	/* ESCAPE */
 					quit = true;
 
-				// std::cout << "Key pressed: " << event.key.keysym.scancode << std::endl;
+				// Log::debug("Key pressed: %d", event.key.keysym.scancode);
 
 			} break;
 			case SDL_KEYUP: {
