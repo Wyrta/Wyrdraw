@@ -1,12 +1,11 @@
 last tick time management : wait, render, proc ?
 
-class Animation ? 
-
 GUI.hpp header w/ button, text,...
 
 GraphicItem animation
 
 GraphicItem MapItem : moveIn(SDL_Point, int) move to xy in z tick
 
+log function : debug, info, warn, error, critical -> terminal color ? 
 
-do -> proc != render
+map creator

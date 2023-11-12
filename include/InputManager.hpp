@@ -2,6 +2,7 @@
 #define _inputmanager_hpp_
 
 #include "SDL2/SDL.h"
+#include "Tile.hpp"
 
 #define MAX_EVENT		16
 #define BUTTON_LEFT		SDL_BUTTON_LEFT
@@ -19,6 +20,9 @@ typedef struct Mouse_s
 	bool click_left, click_right;
 
 	bool last_left, last_right;	/* dont use */
+
+	Tile* current_tile;
+	Tile* waypoint_tile;
 
 /* > 0 UP 
 < 0 DOWN */
@@ -42,12 +46,17 @@ class InputManager
 		void pollEvent(void);
 
     public:
+		InputManager();
+		~InputManager();
+
 		void proc(void);
 		SDL_Event* getEvent(void);
 
 		bool mouseClicked(int button); 
 		bool mouseMaintained(int button); 
 		SDL_Point mouseCoordinate(void);
+		void mouseSetTile(int button, Tile* tile);
+		Tile* mouseGetTile(int button);
 
 		bool getWheel(int wheel);
 

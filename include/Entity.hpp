@@ -6,6 +6,7 @@
 #include "WD_Type.hpp"
 #include "PathFinder.hpp"
 #include "Tile.hpp"
+#include "InputManager.hpp"
 
 
 /*
@@ -16,6 +17,13 @@ Dialog
 	-type: enum -> IDLE, MISSION, INFO
 */
 
+typedef enum
+{
+	IA,
+	REMOTE,
+	INPUT,
+	NO_TYPE
+} EntityType;
 
 class Entity : public MapItem
 {
@@ -29,11 +37,14 @@ class Entity : public MapItem
 		int health;
 		bool do_print_health;
 		void printHealthBar(void);
+		void procPathfinder(void);
+		SDL_Point procMove(void);
 
 		Tile* current_tile;
 
+		EntityType type;
 	public:
-		Entity(const char* e_name);
+		Entity(const char* e_name, EntityType entity_type = EntityType::NO_TYPE);
 		~Entity();
 
 		void setTile(Tile* tile);
@@ -42,9 +53,13 @@ class Entity : public MapItem
 
 		bool walk(SDL_Point diff, Tile* tile = NULL);
 		bool walkTo(SDL_Point coo, Tile* tile = NULL);
-		bool goTo(SDL_Point coo, Tile **tilemap, int size);
+		bool goTo(Tile* tile);
 
 		float getSpeed(void);
+
+		void updateOrder(InputManager* input_manager);
+		// void updateOrder(AI* ai);
+		// void updateOrder(RemoteIput* remote_input);
 
 
 		char *talk(void);

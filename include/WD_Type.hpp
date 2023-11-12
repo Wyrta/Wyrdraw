@@ -16,14 +16,14 @@ typedef struct _WD_Size {
 } WD_Size;
 
 typedef enum {
-	NORTH,
+	NORTH = 0,
+	SOUTH,
+	WEST,
+	EAST = 3,
 	NORTH_WEST,
 	NORTH_EAST,
-	SOUTH,
 	SOUTH_WEST,
 	SOUTH_EAST,
-	WEST,
-	EAST,
 	ALL,
 	NONE
 } WD_Direction;

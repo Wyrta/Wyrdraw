@@ -7,17 +7,19 @@
 extern RenderQueue* renderQueue;
 
 
-Entity::Entity(const char* e_name) : MapItem()
+Entity::Entity(const char* e_name, EntityType entity_type) : MapItem()
 {
 	SDL_strlcpy(name, e_name, 32);
 
 	speed = 0.25;
 	health = 100;
-	orientation = WD_Direction::NONE;
+	orientation = NONE;
 	last_move = 0;
 	pathfinder = NULL;
 
 	current_tile = NULL;
+
+	type = entity_type;
 }
 
 
@@ -56,27 +58,28 @@ void Entity::printHealthBar(void)
 }
 
 
-
-void Entity::proc(void)
+void Entity::procPathfinder(void)
 {
-	// if current_tile deal damages ?
+	if (pathfinder == NULL)
+		return;
 
-	if (pathfinder != NULL)
+	Path* path = pathfinder->getNext(getCoordinate());
+
+	if (path != NULL)
 	{
-		Path* path = pathfinder->getNext(getCoordinate());
-
-		if (path != NULL)
-		{
-			walkTo(path->coordinate);
-			pathfinder->print_path();
-		}
-		else
-		{
-			delete (pathfinder);
-			pathfinder = NULL;
-		}
+		walkTo(path->coordinate);
+		pathfinder->print_path();
 	}
-	
+	else
+	{
+		delete (pathfinder);
+		pathfinder = NULL;
+	}
+}
+
+
+SDL_Point Entity::procMove(void)
+{
 	SDL_Point offset = {0,0};
 
 	if (last_move * speed < 1)
@@ -87,31 +90,76 @@ void Entity::proc(void)
 
 		switch (orientation)
 		{
-			case WD_Direction::NORTH:
+			case NORTH:
 				offset.y = step.h;
 				break;
-			case WD_Direction::SOUTH:
+			case SOUTH:
 				offset.y = -step.h;
 				break;
-			case WD_Direction::WEST:
+			case WEST:
 				offset.x = step.w;
 				break;
-			case WD_Direction::EAST:
+			case EAST:
 				offset.x = -step.w;
 				break;
-			case WD_Direction::NORTH_WEST:
-			case WD_Direction::SOUTH_WEST:
-			case WD_Direction::NORTH_EAST:
-			case WD_Direction::SOUTH_EAST:
-			case WD_Direction::ALL:
+			case NORTH_WEST:
+			case SOUTH_WEST:
+			case NORTH_EAST:
+			case SOUTH_EAST:
+			case ALL:
 				std::cout << "Entity direction not supported" << std::endl;
-			case WD_Direction::NONE:
+			case NONE:
 			default:
 				break;
 		}
 	}
-	setBlur(5);
+
+	return (offset);
+}
+
+void Entity::updateOrder(InputManager* input_manager)
+{
+	if (input_manager->mouseGetTile(BUTTON_LEFT) != NULL && input_manager->mouseClicked(BUTTON_LEFT))
+	{
+		goTo(input_manager->mouseGetTile(BUTTON_LEFT));
+	}
+
+	if (input_manager->keyMaintained(SDLK_d))
+	{
+		walk({1, 0});
+	}
+	else if (input_manager->keyMaintained(SDLK_q))
+	{
+		walk({-1, 0});
+	}
+	else if (input_manager->keyMaintained(SDLK_z))
+	{
+		walk({0, -1});
+	}
+	else if (input_manager->keyMaintained(SDLK_s))
+	{
+		walk({0, 1});
+	}
+	if (input_manager->keyMaintained(SDLK_SPACE))
+	{
+		takeDamages(2);
+	}
+}
+
+
+void Entity::proc(void)
+{
+	procPathfinder();
+
+	SDL_Point offset;
+	offset = procMove();
+
 	MapItem::proc(offset);
+
+	// if current_tile deal damages ?
+
+	current_tile->highlight();
+
 	if (do_print_health)
 		printHealthBar();
 
@@ -148,26 +196,26 @@ bool Entity::walk(SDL_Point diff, Tile* tile)
 	}
 
 	if (diff.x == 1)
-		dir = WD_Direction::EAST;
+		dir = EAST;
 	else if (diff.x == -1)
-		dir = WD_Direction::WEST;
+		dir = WEST;
 	else if (diff.y == 1)
-		dir = WD_Direction::SOUTH;
+		dir = SOUTH;
 	else if (diff.y == -1)
-		dir = WD_Direction::NORTH;
+		dir = NORTH;
 	else 
-		dir = WD_Direction::NONE;
+		dir = NONE;
 
 	if (tile == NULL && current_tile != NULL)
 	{
 		if (diff.x == 1)
-			tile = current_tile->east;
+			tile = current_tile->get(EAST);
 		else if (diff.x == -1)
-			tile = current_tile->west;
+			tile = current_tile->get(WEST);
 		else if (diff.y == 1)
-			tile = current_tile->south;
+			tile = current_tile->get(SOUTH);
 		else if (diff.y == -1)
-			tile = current_tile->north;
+			tile = current_tile->get(NORTH);
 	}
 
 	if (tile == NULL)
@@ -207,21 +255,15 @@ bool Entity::walkTo(SDL_Point coo, Tile* tile)
 }
 
 
-bool Entity::goTo(SDL_Point coo, Tile **tilemap, int size)
+bool Entity::goTo(Tile* tile)
 {
-	if (pathfinder == NULL)
-	{
-		pathfinder = new PathFinder();
-	}
-	else
-	{
+	if (pathfinder != NULL)
 		delete (pathfinder);
-		pathfinder = new PathFinder();
-	}
 
-	pathfinder->setSource(getCoordinate());
-	pathfinder->setDestination(coo);
-	pathfinder->setTilemap(tilemap, size);
+	pathfinder = new PathFinder();
+
+	pathfinder->setSource(current_tile);
+	pathfinder->setDestination(tile->getCoordinate());
 
 	pathfinder->find();
 

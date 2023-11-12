@@ -1,9 +1,20 @@
 #include "InputManager.hpp"
 #include "Parameters.hpp"
+#include "Tile.hpp"
 
 #include <iostream>
 
 extern Parameters param;
+
+InputManager::InputManager()
+{
+	mouse.current_tile = NULL;
+}
+
+InputManager::~InputManager()
+{
+	mouse.current_tile = NULL;
+}
 
 void InputManager::proc(void)
 {
@@ -165,7 +176,24 @@ void InputManager::pollEvent(void)
 	/* save current value */
 	mouse.last_left  = mouse.left;
 	mouse.last_right = mouse.right;
+}
 
+void InputManager::mouseSetTile(int button, Tile* tile)
+{
+	if (button == BUTTON_LEFT)
+		mouse.current_tile = tile;
+	else if (button == BUTTON_RIGHT)
+		mouse.waypoint_tile = tile;
+}
+
+Tile* InputManager::mouseGetTile(int button)
+{
+	if (button == BUTTON_LEFT)
+		return (mouse.current_tile);
+	else if (button == BUTTON_RIGHT)
+		return (mouse.waypoint_tile);
+
+	return (NULL);
 }
 
 

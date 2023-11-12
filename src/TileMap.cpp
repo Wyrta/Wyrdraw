@@ -84,21 +84,21 @@ bool TileMap::addTile(Tile *tile_to_add)
 
 		SDL_Point t_coo = tile[i]->getCoordinate();
 		
-		tile[i]->north = getTile({t_coo.x,t_coo.y-1});
-		if (tile[i]->north != NULL)
-			tile[i]->north->south = tile[i];
+		tile[i]->set(NORTH, getTile({t_coo.x,t_coo.y-1}) );
+		if (tile[i]->get(NORTH) != NULL)
+			tile[i]->get(NORTH)->set(SOUTH, tile[i]);
 
-		tile[i]->south = getTile({t_coo.x,t_coo.y+1});
-		if (tile[i]->south != NULL)
-			tile[i]->south->north = tile[i];
+		tile[i]->set(SOUTH, getTile({t_coo.x,t_coo.y+1}) );
+		if (tile[i]->get(SOUTH) != NULL)
+			tile[i]->get(SOUTH)->set(NORTH, tile[i]);
 
-		tile[i]->west  = getTile({t_coo.x-1,t_coo.y});
-		if (tile[i]->west != NULL)
-			tile[i]->west->east = tile[i];
+		tile[i]->set(WEST, getTile({t_coo.x-1,t_coo.y}) );
+		if (tile[i]->get(WEST) != NULL)
+			tile[i]->get(WEST)->set(EAST, tile[i]);
 
-		tile[i]->east  = getTile({t_coo.x+1,t_coo.y});
-		if (tile[i]->east != NULL)
-			tile[i]->east->west = tile[i];
+		tile[i]->set(EAST, getTile({t_coo.x+1,t_coo.y}) );
+		if (tile[i]->get(EAST) != NULL)
+			tile[i]->get(EAST)->set(WEST, tile[i]);
 
 		tile[i]->followMap(&public_coordinate);
 		return (true);
@@ -356,11 +356,18 @@ void TileMap::proc(InputManager* input_manager)
 				color = {255, 255, 255, 64};
 
 			renderQueue->addItem((new RenderItem())->setRectangle(tile_hitbox, color));
-
+			input_manager->mouseSetTile(BUTTON_LEFT, tile_hovered);
 		}
 
 		number_tile_printed++;
 	}
+
+	if (input_manager->mouseMaintained(BUTTON_RIGHT))
+		input_manager->mouseSetTile(BUTTON_RIGHT, tile_hovered);
+		
+	if (input_manager->mouseGetTile(BUTTON_RIGHT) != NULL)
+		renderQueue->addItem((new RenderItem())->setRectangle(input_manager->mouseGetTile(BUTTON_RIGHT)->getHitbox(), {0,0,0,32}));
+
 
 	for (int i = 0; i < MAX_ENTITY; i++)
 	{
@@ -379,11 +386,6 @@ void TileMap::proc(InputManager* input_manager)
 		}
 
 		entity[i]->proc();
-
-		if (tile_hovered != NULL && input_manager->mouseClicked(BUTTON_LEFT))
-		{
-			entity[i]->goTo(tile_hovered->getCoordinate(), tile, MAX_TILE);
-		}
 	}
 
 	Scene::proc(input_manager);

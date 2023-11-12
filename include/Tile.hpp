@@ -42,9 +42,8 @@ class Tile : public MapItem
 {
 	private: 
 		WD_Direction walk_stat;
-
-
-
+		Tile* neighbors[4];
+	
 	public: 
 		Tile(const char* name, TileType type, SDL_Point coo, WD_Direction dir);
 		~Tile();
@@ -53,15 +52,14 @@ class Tile : public MapItem
 		bool canWalk(WD_Direction direction);
 		void setWalk(WD_Direction direction);
 
+		Tile* get(WD_Direction direction);
+		void set(WD_Direction direction, Tile* tile);
+
 		static int size;
 		static void loadTexture(void);
 		static TileType getTiletype(const char* str);
 		static WD_Direction getTileDirection(const char* str);
 		static SDL_Texture *texture[TileType::LAST_TTYPE];
 
-		Tile* north;
-		Tile* south;
-		Tile* west;
-		Tile* east;
 };
 #endif // _tile_hpp_

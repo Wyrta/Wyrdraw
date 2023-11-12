@@ -19,19 +19,13 @@ Tile::Tile(const char* name, TileType type, SDL_Point coo, WD_Direction dir) : M
 
 	walk_stat = dir;
 
-	north = NULL;
-	south = NULL;
-	west = NULL;
-	east = NULL;
+
 }
 
 
 Tile::~Tile()
 {
-	north = NULL;
-	south = NULL;
-	west = NULL;
-	east = NULL;
+
 }
 
 
@@ -40,9 +34,25 @@ WD_Direction Tile::canWalk(void)
 	return (walk_stat);
 }
 
+Tile* Tile::get(WD_Direction direction)
+{
+	if (direction > 3)
+		return (NULL);
+
+	return (neighbors[direction]);
+}
+
+void Tile::set(WD_Direction direction, Tile* tile)
+{
+	if (direction > 3)
+		return;
+		
+	neighbors[direction] = tile;
+}
+
 bool Tile::canWalk(WD_Direction direction)
 {
-	if ((direction == walk_stat) || (walk_stat == WD_Direction::ALL))
+	if ((direction == walk_stat) || (walk_stat == ALL))
 		return (true);
 	else
 		return (false);
@@ -52,6 +62,7 @@ void Tile::setWalk(WD_Direction direction)
 {
 	walk_stat = direction;
 }
+
 
 void Tile::loadTexture(void)
 {
@@ -163,22 +174,22 @@ TileType Tile::getTiletype(const char* str)
 
 WD_Direction Tile::getTileDirection(const char* str)
 {
-	WD_Direction dir = WD_Direction::NONE;
+	WD_Direction dir = NONE;
 
 	std::string dir_str = str;
 	
 	if (dir_str == "NORTH")
-		dir = WD_Direction::NORTH;
+		dir = NORTH;
 	else if (dir_str == "SOUTH")
-		dir = WD_Direction::SOUTH;
+		dir = SOUTH;
 	else if (dir_str == "WEST")
-		dir = WD_Direction::WEST;
+		dir = WEST;
 	else if (dir_str == "EAST")
-		dir = WD_Direction::EAST;
+		dir = EAST;
 	else if (dir_str == "ALL")
-		dir = WD_Direction::ALL;
+		dir = ALL;
 	else if (dir_str == "NONE")
-		dir = WD_Direction::NONE;
+		dir = NONE;
 
 	return (dir);
 }

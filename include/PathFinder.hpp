@@ -20,31 +20,31 @@ class PathFinder
 	private:
 		SDL_Point src, dst;
 
-		Tile** tiles;
-		int tilemap_size;
+		Tile* tile;
 
 		Path* itinerary[MAX_PATH_LENGTH];
 
 		bool itinerary_done;
 		int current_path;
 
-		void addPath(SDL_Point coordinate);
+		void addPath(Tile* added_tile);
 		Path* getPath(SDL_Point coordinate);
 		
 		Tile* getTile(SDL_Point tile_coordinate);
 		Tile* findTile(WD_Direction direction, SDL_Point coo);
 
-		Tile* findNorth(SDL_Point coo);
-		Tile* findSouth(SDL_Point coo);
-		Tile* findWest(SDL_Point coo);
-		Tile* findEast(SDL_Point coo);
+		Tile* findNorth(Tile* current_tile);
+		Tile* findSouth(Tile* current_tile);
+		Tile* findWest(Tile* current_tile);
+		Tile* findEast(Tile* current_tile);
+
+		Tile* findClosest(Tile* current_tile, WD_Direction target, WD_Direction choice1, WD_Direction choice2);
 
 	public:
 		PathFinder();
 		~PathFinder();
 
-		void setTilemap(Tile* tilemap[], int size);
-		void setSource(SDL_Point coordinate);
+		void setSource(Tile* source);
 		void setDestination(SDL_Point coordinate);
 
 		void find(void);

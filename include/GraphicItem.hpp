@@ -15,6 +15,9 @@ class GraphicItem
 		bool const_texture;
 
 		int blur = 1;
+		
+		bool highlighted;
+		SDL_Color highlight_color;
 
     public:
 		GraphicItem();
@@ -34,6 +37,8 @@ class GraphicItem
 		void setConstTexture(bool isConst);
 
 		void setBlur(int blr) {blur = blr;}
+		
+		void highlight(void);
 
 		static GraphicItem* newGraphicItem(const char* path, SDL_Rect hitbox = EMPTY_RECT, SDL_Rect mask = EMPTY_RECT);
 };

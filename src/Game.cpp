@@ -9,7 +9,7 @@
 #include "WD_Type.hpp"
 
 extern Parameters param;
-Entity* player;
+Entity* player,* player2,* player3;
 
 int Game::init(SDL_Rect* screen)
 {
@@ -45,6 +45,17 @@ int Game::ready(void)
 	player->setTexture(createTexture(param.getRenderer(), NULL, "../assets/img/npcTest.png"));
 	map->addEntity(player);
 
+
+	player2 = new Entity("Player2");
+	player2->setTile(map->getTile({1,1}));
+	player2->setTexture(createTexture(param.getRenderer(), NULL, "../assets/img/mobTest.png"));
+	map->addEntity(player2);
+
+	player3 = new Entity("Player3");
+	player3->setTile(map->getTile({2,2}));
+	player3->setTexture(createTexture(param.getRenderer(), NULL, "../assets/img/mobTest.png"));
+	map->addEntity(player3);
+
 	map->setFollowEntity(0);
 	map->setEnable(true);
 
@@ -56,26 +67,9 @@ int Game::proc(InputManager* input_manager)
 {	
 	++tick_number;
 
-	if (input_manager->keyMaintained(SDLK_d))
-	{
-		player->walk({1, 0});
-	}
-	else if (input_manager->keyMaintained(SDLK_q))
-	{
-		player->walk({-1, 0});
-	}
-	else if (input_manager->keyMaintained(SDLK_z))
-	{
-		player->walk({0, -1});
-	}
-	else if (input_manager->keyMaintained(SDLK_s))
-	{
-		player->walk({0, 1});
-	}
-	if (input_manager->keyMaintained(SDLK_SPACE))
-	{
-		player->takeDamages(2);
-	}
+	player->updateOrder(input_manager);
+	// player2->updateOrder(input_manager);
+
 	map->proc(input_manager);
 
 	return (0);

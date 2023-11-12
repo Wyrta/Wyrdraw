@@ -14,6 +14,9 @@ GraphicItem::GraphicItem()
 	mask = EMPTY_RECT;
 	const_texture = false;
 	texture = NULL;
+
+	highlighted = false;
+	highlight_color = {255,255,255,64};
 }
 
 
@@ -38,8 +41,18 @@ void GraphicItem::proc(void)
 	}
 
 	renderQueue->addItem((new RenderItem(blur))->setTexture(texture, src, dst));
+
+	if (highlighted)
+		renderQueue->addItem((new RenderItem(blur))->setRectangle(hitbox, highlight_color));
+
+	highlighted = false;
 }
 
+
+void GraphicItem::highlight(void)
+{
+	highlighted = true;
+}
 
 SDL_Rect GraphicItem::getHitbox(void)
 {

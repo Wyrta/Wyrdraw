@@ -8,7 +8,7 @@
 #include "InputManager.hpp"
 #include "Entity.hpp"
 
-#define MAX_TILE	512
+#define MAX_TILE	1024
 #define MAX_ENTITY	32
 
 class TileMap : public Scene

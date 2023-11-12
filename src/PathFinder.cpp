@@ -16,8 +16,7 @@ PathFinder::PathFinder()
 		itinerary[i] = NULL;
 	}
 
-	tiles = NULL;
-	tilemap_size = -1;
+	tile = NULL;
 
 	current_path = -1;
 
@@ -25,6 +24,8 @@ PathFinder::PathFinder()
 
 	src = EMPTY_POINT;
 	dst = EMPTY_POINT;
+
+	std::cout << "aaa" << std::endl;
 }
 
 
@@ -32,19 +33,18 @@ PathFinder::~PathFinder()
 {
 	for (int i = 0; i < MAX_PATH_LENGTH; i++)
 	{
-		if (itinerary[i] != NULL)
-		{
-			SDL_free(itinerary[i]);
-			itinerary[i] = NULL;
-		}
+		if (itinerary[i] == NULL)
+			continue;
+
+		SDL_free(itinerary[i]);
+		itinerary[i] = NULL;
 	}
 
-	tiles = NULL;
-	tilemap_size = -1;
+	tile = NULL;
 }
 
 
-void PathFinder::addPath(SDL_Point coordinate)
+void PathFinder::addPath(Tile* added_tile)
 {
 	Path* path = NULL;
 
@@ -55,15 +55,14 @@ void PathFinder::addPath(SDL_Point coordinate)
 		return;
 	
 	current_path++;
-//	std::cout << current_path << " addPath(" << printPoint(coordinate) << ")" << std::endl;
 
 	itinerary[current_path] = (Path *)SDL_malloc(sizeof(Path));
 
 	path = itinerary[current_path];
 
 	path->id = current_path;
-	path->coordinate = coordinate;
-	path->tile = getTile(coordinate);
+	path->coordinate = added_tile->getCoordinate();
+	path->tile = added_tile;
 
 	path->previous = itinerary[current_path-1];
 	path->next = NULL;
@@ -88,29 +87,41 @@ Path* PathFinder::getPath(SDL_Point coordinate)
 
 Tile* PathFinder::getTile(SDL_Point tile_coordinate)
 {
-	for (int i = 0; i < tilemap_size; i++)
-	{
-		if (tiles[i] == NULL)
-			continue;
+	int x, y;
+	Tile* moving_tile = tile;
+	SDL_Point current_pos;
 
-		if (tiles[i]->getCoordinate() == tile_coordinate)
-			return (tiles[i]);
+	current_pos = moving_tile->getCoordinate();
+	x = current_pos.x;
+	y = current_pos.y;
+	
+	while (tile_coordinate != current_pos)
+	{
+		if (x < tile_coordinate.x)
+			moving_tile = moving_tile->get(EAST);
+
+		if (x > tile_coordinate.x)
+			moving_tile = moving_tile->get(WEST);
+
+		if (y > tile_coordinate.y)
+			moving_tile = moving_tile->get(NORTH);
+
+		if (y < tile_coordinate.y)
+			moving_tile = moving_tile->get(SOUTH);
+
+		current_pos = moving_tile->getCoordinate();
+		x = current_pos.x;
+		y = current_pos.y;
 	}
 
-	return (NULL);
+	return (tile);
 }
 
 
-void PathFinder::setTilemap(Tile* tilemap[], int size)
+void PathFinder::setSource(Tile* source)
 {
-	tiles = tilemap;
-	tilemap_size = size;
-}
-
-
-void PathFinder::setSource(SDL_Point coordinate)
-{
-	src = coordinate;
+	tile = source;
+	src = tile->getCoordinate();
 }
 
 
@@ -124,216 +135,228 @@ WD_Direction getDirection(double angle)
 	WD_Direction direction;
 
 	if (angle > (-M_PI)/2 && angle < M_PI/8)
-		direction = WD_Direction::WEST;
+		direction = WEST;
 
 	if (angle >= M_PI/8 && angle <= (3*M_PI)/8)
-		direction = WD_Direction::NORTH_WEST;	
+		direction = NORTH_WEST;	
 
 	if (angle > (3*M_PI)/8 && angle < (5*M_PI)/8)
-		direction = WD_Direction::NORTH;	
+		direction = NORTH;	
 
 	if (angle >= (5*M_PI)/8 && angle <= (7*M_PI)/8)
-		direction = WD_Direction::NORTH_EAST;	
+		direction = NORTH_EAST;	
 
 	if (angle > (7*M_PI)/8 || angle < (-7*M_PI)/8)
-		direction = WD_Direction::EAST;	
+		direction = EAST;	
 
 	if (angle >= (-7*M_PI)/8 && angle <= (-5*M_PI)/8)
-		direction = WD_Direction::SOUTH_EAST;	
+		direction = SOUTH_EAST;	
 
 	if (angle > (-5*M_PI)/8 && angle < (-3*M_PI)/8)
-		direction = WD_Direction::SOUTH;	
+		direction = SOUTH;	
 
 	if (angle >= (-3*M_PI)/8 && angle <= (-1*M_PI)/8)
-		direction = WD_Direction::SOUTH_WEST;	
+		direction = SOUTH_WEST;	
 
 	return (direction);
 }
 
 
-Tile* PathFinder::findTile(WD_Direction direction, SDL_Point coo)
+Tile* PathFinder::findNorth(Tile* current_tile)
 {
-	Tile* north,*south,*west,*east;
-	Tile* tile = NULL;
+	Tile* founded_tile = NULL;
 
-	north = findNorth(coo);
-	south = findSouth(coo);
-	west = findWest(coo);
-	east = findEast(coo);
+	if (current_tile->get(NORTH) == NULL)
+		return (current_tile);
 
-	switch (direction)
+	if (current_tile->get(NORTH)->canWalk(NORTH))
+		founded_tile = current_tile->get(NORTH);
+	else
+		founded_tile = findClosest(current_tile, NORTH, WEST, EAST);
+
+	return (founded_tile);
+}
+
+
+Tile* PathFinder::findSouth(Tile* current_tile)
+{
+	Tile* founded_tile = NULL;
+
+	if (current_tile->get(SOUTH) == NULL)
+		return (current_tile);
+
+	if (current_tile->get(SOUTH)->canWalk(SOUTH))
+		founded_tile = current_tile->get(SOUTH);
+	else
+		founded_tile = findClosest(current_tile, SOUTH, WEST, EAST);
+
+
+	return (founded_tile);
+}
+
+
+Tile* PathFinder::findWest(Tile* current_tile)
+{
+	Tile* founded_tile = NULL;
+
+	if (current_tile->get(WEST) == NULL)
+		return (current_tile);
+
+	if (current_tile->get(WEST)->canWalk(WEST))
+		founded_tile = current_tile->get(WEST);
+	else
+		founded_tile = findClosest(current_tile, WEST, NORTH, SOUTH);
+
+	return (founded_tile);
+}
+
+
+Tile* PathFinder::findEast(Tile* current_tile)
+{
+	Tile* founded_tile = NULL;
+
+	if (current_tile->get(EAST) == NULL)
+		return (current_tile);
+
+	if (current_tile->get(EAST)->canWalk(EAST))
+		founded_tile = current_tile->get(EAST);
+	else
+		founded_tile = findClosest(current_tile, EAST, NORTH, SOUTH);
+
+	return (founded_tile);
+}
+
+
+Tile* PathFinder::findClosest(Tile* current_tile, WD_Direction target, WD_Direction choice1, WD_Direction choice2)
+{
+	Tile* tmp = NULL;
+
+	int number1 = 0, number2 = 0;
+
+	tmp = current_tile;
+	while (!tmp->get(target)->canWalk(target))
 	{
-	case WD_Direction::NORTH:
-	case WD_Direction::NORTH_WEST:
-		if (north != NULL)
-			tile = north;
-		else if (west != NULL)
-			tile = west;
-		else if (east != NULL)
-			tile = east;
-		else
-			tile = south;
-		break;
-	case WD_Direction::SOUTH:
-	case WD_Direction::SOUTH_WEST:
-		if (south != NULL)
-			tile = south;
-		else if (west != NULL)
-			tile = west;
-		else if (east != NULL)
-			tile = east;
-		else
-			tile = north;
-		break;
-	case WD_Direction::NORTH_EAST:
-		if (north != NULL)
-			tile = north;
-		else if (east != NULL)
-			tile = east;
-		else if (west != NULL)
-			tile = west;
-		else
-			tile = south;
-		break;
-	case WD_Direction::SOUTH_EAST:
-		if (south != NULL)
-			tile = south;
-		else if (east != NULL)
-			tile = east;
-		else if (west != NULL)
-			tile = west;
-		else
-			tile = north;
-		break;
-	case WD_Direction::WEST:
-		if (west != NULL)
-			tile = west;
-		else if (south != NULL)
-			tile = south;
-		else if (north != NULL)
-			tile = north;
-		else
-			tile = east;
-		break;
-	case WD_Direction::EAST:
-		if (east != NULL)
-			tile = east;
-		else if (north != NULL)
-			tile = north;
-		else if (south != NULL)
-			tile = south;
-		else
-			tile = west;
-		break;
-	case WD_Direction::ALL:
-		if (north != NULL)
-			tile = north;
-		else if (west != NULL)
-			tile = west;
-		else if (east != NULL)
-			tile = east;
-		else
-			tile = south;
-		break;
-	case WD_Direction::NONE:
-	default:
-		tile = NULL;
-		break;
+		tmp = tmp->get(choice1);
+		number1++;
+		if (tmp == NULL)
+		{
+			number1 = 1024;
+			break;
+		}
 	}
 
-	return (tile);
+	tmp = current_tile;
+	while (!tmp->get(target)->canWalk(target))
+	{
+		tmp = tmp->get(choice2);
+		number2++;
+		if (tmp == NULL)
+		{
+			number2 = 1024;
+			break;
+		}
+	}
+
+	std::cout << printDirection(choice1) << number1 << ", " << printDirection(choice1) << number2 << std::endl;
+
+	if (number1 < number2)
+		tmp = current_tile->get(choice1);
+	else
+		tmp = current_tile->get(choice2);
+
+	return (tmp);
 }
-
-
-
-Tile* PathFinder::findNorth(SDL_Point coo)
-{
-	Tile* tile = getTile({coo.x,coo.y-1});
-/*
-	if (!tile->canWalk(WD_Direction::SOUTH))
-		tile = NULL;
-*/	
-	return (tile);
-}
-
-
-Tile* PathFinder::findSouth(SDL_Point coo)
-{
-	Tile* tile = getTile({coo.x,coo.y+1});
-/*
-	if (!tile->canWalk(WD_Direction::NONE))
-		tile = NULL;
-*/	
-	return (tile);
-}
-
-
-Tile* PathFinder::findWest(SDL_Point coo)
-{
-	Tile* tile = getTile({coo.x-1,coo.y});
-/*
-	if (!tile->canWalk(WD_Direction::EAST))
-		tile = NULL;
-	*/
-	return (tile);
-}
-
-
-Tile* PathFinder::findEast(SDL_Point coo)
-{
-	Tile* tile = getTile({coo.x+1,coo.y});
-/*
-	if (!tile->canWalk(WD_Direction::WEST))
-		tile = NULL;
-	*/
-	return (tile);
-}
-
 
 
 void PathFinder::find(void)
 {
+	std::cout << "[PathFinder] : Start finding path from " << printPoint(src) << " to " << printPoint(dst) << std::endl;
+
 	if (src == dst)
 		return;
 
-	if (tiles == NULL || tilemap_size <= 0)
+	if (tile == NULL)
 		return;
 
-	// start
-
 	SDL_Point pos = src;
-	WD_Direction prefered_direction = WD_Direction::NONE;
-	Tile* tmp_tile = NULL;
-	double angle;
+	Tile* current_tile = tile;
+	Tile* next_tile = current_tile;
 	int path_length = 0;
 
-	addPath(src);
+	addPath(tile);
 
-	do
+	int max_i = 32, i= 0;
+
+	while (pos != dst)
 	{
-		angle = SDL_atan2(pos.y - dst.y, pos.x - dst.x);
-
-		prefered_direction = getDirection(angle);
-
-//		std::cout << "Pos: " << printPoint(pos) << "Angle: " << angle << " Direction: " << printDirection(prefered_direction) << std::endl;
-
-		tmp_tile = findTile(prefered_direction, pos);
-
-		if (tmp_tile == NULL)
+/*
+		if (abs(dst.x - pos.x) > abs(dst.y - pos.y))
 		{
-			std::cout << "[PathFinder] Error : no tile found in " << printPoint(pos) << std::endl;
-			break;
+			if (pos.x < dst.x && current_tile == next_tile)
+				next_tile = findEast(current_tile);
+		
+			if (pos.x > dst.x && current_tile == next_tile)
+				next_tile = findWest(current_tile);
+		}
+		else
+		{
+			if (pos.y > dst.y && current_tile == next_tile)
+				next_tile = findNorth(current_tile);
+
+			if (pos.y < dst.y && current_tile == next_tile)
+				next_tile = findSouth(current_tile);
 		}
 
-		pos = tmp_tile->getCoordinate();
+		if (abs(dst.x - pos.x) < abs(dst.y - pos.y))
+		{
+			if (pos.x < dst.x && current_tile == next_tile)
+				next_tile = findEast(current_tile);
+		
+			if (pos.x > dst.x && current_tile == next_tile)
+				next_tile = findWest(current_tile);
+		}
+		else
+		{
+			if (pos.y > dst.y && current_tile == next_tile)
+				next_tile = findNorth(current_tile);
 
-		addPath(pos);
+			if (pos.y < dst.y && current_tile == next_tile)
+				next_tile = findSouth(current_tile);
+		}
+*/
+		if (pos.x < dst.x && current_tile == next_tile)
+			next_tile = findEast(current_tile);
+	
+		if (pos.x > dst.x && current_tile == next_tile)
+			next_tile = findWest(current_tile);
+
+		if (pos.y < dst.y && current_tile == next_tile)
+			next_tile = findSouth(current_tile);
+			
+		if (pos.y > dst.y && current_tile == next_tile)
+			next_tile = findNorth(current_tile);
+
+
+		pos = next_tile->getCoordinate();
+
+		if (current_tile == next_tile)
+		{
+			std::cout << "[PathFinder] : Didn't find next tile " << printPoint(pos) << std::endl;
+			return;
+		}
+
+		addPath(next_tile);
+		current_tile = next_tile;
+
+		// std::cout << "[PathFinder] : add tile " << printPoint(pos) << std::endl;
+
+		SDL_Rect hitbox = current_tile->getHitbox();
+		renderQueue->addItem((new RenderItem())->setRectangle(hitbox, {255, 0, 0, 32}));
 		path_length++;
 
-		SDL_Rect hitbox = tmp_tile->getHitbox();
-		renderQueue->addItem((new RenderItem())->setRectangle(hitbox, {255, 0, 0, 32}));
-
-	} while (pos != dst);
+		if (++i > max_i)
+			return;
+	}
 
 	std::cout << "[PathFinder] : " << printPoint(src) << printPoint(dst) << "In " << path_length << " tiles" << std::endl;
 
