@@ -49,7 +49,6 @@ void Scene::proc(InputManager* input_manager)
 				if (input_manager->mouseMaintained(BUTTON_LEFT))
 					maintain = true;
 
-				Log::info("%s %s", printPoint(mouse), printRect(hitbox));
 			}
 		}
 

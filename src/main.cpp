@@ -11,8 +11,6 @@
 #include "Cursor.hpp"
 #include "RenderQueue.hpp"
 
-#include "Animation.hpp"
-
 
 #define APP_NAME	"Wyrdraw engine"
 

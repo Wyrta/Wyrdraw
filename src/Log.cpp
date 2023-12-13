@@ -17,6 +17,9 @@ void Log::print(int color, const char* pre, const char* log)
 
 void Log::debug(const char* fmt, ...)
 {
+	if (!Log::print_debug)
+		return;
+		
 	/* args parsing */
 	va_list arglist;
 	char buff[BUF_LENGTH];

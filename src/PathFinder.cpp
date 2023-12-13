@@ -266,7 +266,7 @@ Tile* PathFinder::findClosest(Tile* current_tile, WD_Direction target, WD_Direct
 
 void PathFinder::find(void)
 {
-	Log::info("Start finding path from %s to %s", printPoint(src), printPoint(dst) );
+	Log::info("Start finding path from x%d,y%d to x%d,y%d", src.x, src.y, dst.x, dst.y);
 
 	if (src == dst)
 		return;
@@ -337,7 +337,7 @@ void PathFinder::find(void)
 
 		if (current_tile == next_tile)
 		{
-			Log::error("Didn't find next tile %s", printPoint(pos));
+			Log::error("Didn't find next tile x%d,y%d", pos.x, pos.y);
 			return;
 		}
 
@@ -352,7 +352,7 @@ void PathFinder::find(void)
 			return;
 	}
 
-	Log::info("%s to %s in %d tiles", printPoint(src), printPoint(dst), path_length);
+	Log::info("x%d,y%d to x%d,y%d in %d tiles", src.x, src.y, dst.x, dst.y, path_length);
 
 	for (int i = 0; i < MAX_PATH_LENGTH; i++)
 	{

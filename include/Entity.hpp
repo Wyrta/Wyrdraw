@@ -7,8 +7,9 @@
 #include "PathFinder.hpp"
 #include "Tile.hpp"
 #include "InputManager.hpp"
+#include "Animation.hpp"
 
-
+#define MAX_ANIMATION	8
 /*
 
 Dialog
@@ -24,6 +25,22 @@ typedef enum
 	INPUT,
 	NO_TYPE
 } EntityType;
+
+typedef enum
+{
+	WALK,
+	IDLE,
+	NO_ANIMATION
+} AnimationType;
+
+typedef struct
+{
+	Animation* animation;
+	bool doDestroy;
+	AnimationType type;
+	int info;
+} EntityAnimation;
+
 
 class Entity : public MapItem
 {
@@ -43,6 +60,8 @@ class Entity : public MapItem
 		Tile* current_tile;
 
 		EntityType type;
+		EntityAnimation animations[MAX_ANIMATION];
+
 	public:
 		Entity(const char* e_name, EntityType entity_type = EntityType::NO_TYPE);
 		~Entity();
@@ -61,6 +80,10 @@ class Entity : public MapItem
 		// void updateOrder(AI* ai);
 		// void updateOrder(RemoteIput* remote_input);
 
+
+		bool addAnimation(Animation* animation, AnimationType type, int info, bool doDestroyAtEnd = true);
+		bool addAnimation(EntityAnimation animation);
+		EntityAnimation *getAnimation(AnimationType animation_type, int animation_info);
 
 		char *talk(void);
 

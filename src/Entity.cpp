@@ -20,6 +20,14 @@ Entity::Entity(const char* e_name, EntityType entity_type) : MapItem()
 	current_tile = NULL;
 
 	type = entity_type;
+
+	for (int i = 0;i < MAX_ANIMATION;i++)
+	{
+		animations[i].animation = NULL;
+		animations[i].doDestroy = true;
+		animations[i].type = AnimationType::NO_ANIMATION;
+		animations[i].info = -1;
+	}
 }
 
 
@@ -154,14 +162,32 @@ void Entity::proc(void)
 	SDL_Point offset;
 	offset = procMove();
 
-	MapItem::proc(offset);
-
 	// if current_tile deal damages ?
 
 	current_tile->highlight();
 
 	if (do_print_health)
 		printHealthBar();
+
+	AnimationType animation_type = AnimationType::IDLE;
+	int animation_info = 0;
+
+	if (offset != EMPTY_POINT)
+	{
+		animation_type = AnimationType::WALK;
+		animation_info = orientation;
+	}
+
+
+	EntityAnimation *animation = getAnimation(animation_type, animation_info);
+	if (animation != NULL)
+	{
+		SDL_Texture *animated_texture = animation->animation->getNextFrame();
+
+		setTexture(animated_texture);
+	}
+
+	MapItem::proc(offset);
 
 	last_move++;
 }
@@ -182,8 +208,7 @@ bool Entity::walk(SDL_Point diff, Tile* tile)
 
 	if (diff.x > 1 || diff.x < -1 || diff.y > 1 || diff.y < -1)
 	{
-		Log::error("Entity::walk(...) To far away : %s %s", printPoint(coo), printPoint(diff));
-		Log::error("Try enable pathfinding");
+		Log::error("Entity::walk(...) To far away");
 
 		return (false);
 	}
@@ -305,4 +330,51 @@ void Entity::onDead(void)
 {
 	Log::info("%s is dead", name);
 	Log::debug("Entity::onDead(void) not implemented");
+}
+
+
+bool Entity::addAnimation(Animation* animation, AnimationType type, int info, bool doDestroyAtEnd)
+{
+	for (int i = 0;i < MAX_ANIMATION;i++)
+	{
+		if (animations[i].type == AnimationType::NO_ANIMATION)
+		{
+			animations[i].type = type;
+			animations[i].doDestroy = doDestroyAtEnd;
+			animations[i].info = info;
+			animations[i].animation = animation;
+
+			return (true);
+		}
+	}
+	return (false);
+}
+
+
+bool Entity::addAnimation(EntityAnimation animation)
+{
+	for (int i = 0;i < MAX_ANIMATION;i++)
+	{
+		if (animations[i].type == AnimationType::NO_ANIMATION)
+		{
+			animations[i].type = animation.type;
+			animations[i].doDestroy = animation.doDestroy;
+			animations[i].info = animation.info;
+			animations[i].animation = animation.animation;
+
+			return (true);
+		}
+	}
+	return (false);
+}
+
+
+EntityAnimation *Entity::getAnimation(AnimationType animation_type, int animation_info)
+{
+	for (int i = 0;i < MAX_ANIMATION;i++)
+	{
+		if (animations[i].type == animation_type && animations[i].info == animation_info)
+			return (&animations[i]);
+	}
+	return (NULL);
 }

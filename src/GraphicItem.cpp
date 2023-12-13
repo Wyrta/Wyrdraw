@@ -93,7 +93,8 @@ SDL_Texture* GraphicItem::getTexture(void)
 
 void GraphicItem::setTexture(SDL_Texture* new_texture)
 {
-	if (new_texture == NULL) return;
+	if (new_texture == NULL) 
+		return;
 	
 	texture = new_texture;
 	SDL_QueryTexture(texture, NULL, NULL, &hitbox.w, &hitbox.h);
