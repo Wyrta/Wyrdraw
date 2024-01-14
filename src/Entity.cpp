@@ -183,7 +183,7 @@ void Entity::proc(void)
 	if (animation != NULL)
 	{
 		SDL_Texture *animated_texture = animation->animation->getNextFrame();
-
+		Log::debug("texture: 0x%x", animated_texture);
 		setTexture(animated_texture);
 	}
 

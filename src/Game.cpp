@@ -47,65 +47,74 @@ int Game::ready(void)
 
 	player = new Entity("Player1");
 	player->setTile(map->getTile({0,0}));
-
 	Log::print_debug = true;
 
-	Log::debug("test");
-	int cpt = 0;
-	Log::debug("%d", cpt++);
+	Log::debug("Init animation");
+	Animation *animation = NULL;
 
-	Animation *animation;
-
+	Log::debug("Animation 1");
 	animation = new Animation(5);
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/01.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/02.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/03.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/04.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/05.png"));
+	animation->addFrame("../assets/img/player_1/01.png", param.getRenderer());
+	animation->addFrame("../assets/img/player_1/02.png", param.getRenderer());
+	animation->addFrame("../assets/img/player_1/03.png", param.getRenderer());
+	animation->addFrame("../assets/img/player_1/04.png", param.getRenderer());
+	animation->addFrame("../assets/img/player_1/05.png", param.getRenderer());
 	animation->setFrameRate(FRAMERATE);
-	Log::debug("%d", cpt++);
-
 	player->addAnimation(animation, AnimationType::WALK, WD_Direction::NORTH);
-	Log::debug("%d", cpt++);
+	Log::debug("OK");
 
+	Log::debug("Animation 2");
 	animation = new Animation(5);
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/11.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/12.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/13.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/14.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/15.png"));
+	animation->addFrame("../assets/img/player_1/11.png", param.getRenderer());
+	animation->addFrame("../assets/img/player_1/12.png", param.getRenderer());
+	animation->addFrame("../assets/img/player_1/13.png", param.getRenderer());
+	animation->addFrame("../assets/img/player_1/14.png", param.getRenderer());
+	animation->addFrame("../assets/img/player_1/15.png", param.getRenderer());
 	animation->setFrameRate(FRAMERATE);
-	Log::debug("%d", cpt++);
-
 	player->addAnimation(animation, AnimationType::WALK, WD_Direction::WEST);
-	Log::debug("%d", cpt++);
-
+	Log::debug("OK");
+	
+	Log::debug("Animation 3");
 	animation = new Animation(5);
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/21.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/22.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/23.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/24.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/25.png"));
+	Log::debug(" - create obj: OK");
+
+	animation->addFrame("../assets/img/player_1/21.png", param.getRenderer());
+	Log::debug(" - addframe1: OK");
+	SDL_Delay(100);
+	animation->addFrame("../assets/img/player_1/22.png", param.getRenderer());
+	Log::debug(" - addframe2: OK");
+	SDL_Delay(100);
+	animation->addFrame("../assets/img/player_1/23.png", param.getRenderer());
+	Log::debug(" - addframe3: OK");
+	SDL_Delay(100);
+	animation->addFrame("../assets/img/player_1/24.png", param.getRenderer());
+	Log::debug(" - addframe4: OK");
+	SDL_Delay(100);
+	animation->addFrame("../assets/img/player_1/25.png", param.getRenderer());
+	Log::debug(" - addframe5: OK");
+	SDL_Delay(100);
 	animation->setFrameRate(FRAMERATE);
-	Log::debug("%d", cpt++);
-
+	Log::debug(" - set framerate: OK");
 	player->addAnimation(animation, AnimationType::WALK, WD_Direction::SOUTH);
-	Log::debug("%d", cpt++);
+	Log::debug(" - add animation: OK");
+	Log::debug("OK");
+/*
 
 	animation = new Animation(5);
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/31.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/32.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/33.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/34.png"));
-	animation->addFrame(createTexture(param.getRenderer(), NULL, "../assets/img/player_1/35.png"));
+	animation->addFrame("../assets/img/player_1/31.png", param.getRenderer());
+	animation->addFrame("../assets/img/player_1/32.png", param.getRenderer());
+	animation->addFrame("../assets/img/player_1/33.png", param.getRenderer());
+	animation->addFrame("../assets/img/player_1/34.png", param.getRenderer());
+	animation->addFrame("../assets/img/player_1/35.png", param.getRenderer());
 	animation->setFrameRate(FRAMERATE);
 	Log::debug("%d", cpt++);
 
 	player->addAnimation(animation, AnimationType::WALK, WD_Direction::EAST);
 	Log::debug("%d", cpt++);
-
+*/
+	Log::debug("Entity: 0x%x", player);
 	map->addEntity(player);
-	Log::debug("%d", cpt++);
+	Log::debug("Entity loaded successfully");
 
 	player2 = new Entity("Player2");
 	player2->setTile(map->getTile({1,1}));

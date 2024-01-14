@@ -8,8 +8,12 @@ Animation::Animation(int frame_alloc_size)
 	if (frame_alloc_size > 0)
 	{
 		frames = (SDL_Texture**)SDL_malloc(max_frame * sizeof(SDL_Texture*));
-		max_frame = frame_alloc_size;
+		Log::critical("Failed to create animation");
 
+		if (frames == NULL)
+			Log::critical("Failed to create animation");
+
+		max_frame = frame_alloc_size;
 		for (int i = 0; i < max_frame; i++)
 			frames[i] = NULL;
 	}
@@ -58,9 +62,13 @@ bool Animation::addFrame(SDL_Texture* texture)
 
 bool Animation::addFrame(const char* texture_path, SDL_Renderer* render)
 {
+	Log::debug("addFrame(%s, 0x%x)", texture_path, render);
+
 	SDL_Texture* texture = NULL;
 
 	texture = createTexture(render, NULL, texture_path);
+
+	Log::debug("texture: 0x%x", texture);
 
 	if (texture == NULL)
 		return (false);
@@ -75,7 +83,7 @@ SDL_Texture* Animation::getNextFrame(void)
 	{
 		Uint32 current_frame = SDL_GetTicks();
 
-		if (current_frame - last_frame >= frame_time)
+		if ((current_frame - last_frame) >= frame_time)
 		{
 			last_frame = current_frame;
 			frame_id++;
